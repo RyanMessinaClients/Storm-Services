@@ -1,0 +1,170 @@
+[
+  {
+    "id": "cap_momzv5kb_5sj4cs",
+    "selector": "div.BaseContainer_baseContainer__fIo3i",
+    "label": "160B+ Assets under our protection 35K+ C…",
+    "tag": "div",
+    "url": "https://www.garda.com/solutions",
+    "title": "Security Solutions & Services | GardaWorld Security",
+    "timestamp": "2026-05-01T14:14:42.155Z",
+    "innerText": "160B+\n\nAssets under our protection\n\n35K+\n\nClients we serve\n\n1:7\n\nManager to security officer ratio",
+    "outerHTML": "<div class=\"BaseContainer_baseContainer__fIo3i width-12 paddingTop-sm paddingBottom-xl flex align-center justify-center ResponsiveContainer_row__ldOYM\"><div class=\"BaseContainer_baseContainer__fIo3i width-xs-12 width-lg-12 paddingRight-none paddingLeft-none\"><div class=\"BaseContainer_baseContainer__fIo3i flex justify-space-between direction-xs-column direction-lg-row gap-xs-sm gap-lg-undefined columns\"><div class=\"BaseContainer_baseContainer__fIo3i width-xs-12 width-lg-4 flex align-start justify-start direction-column column AnimatedContainer_container__EyevB AnimatedContainer_fade-slide-up__rDM_c AnimatedContainer_animate__yRFy5\"><div class=\"BaseContainer_baseContainer__fIo3i Wrapper_blockWrapper___RYjd\"><div class=\"BaseContainer_baseContainer__fIo3i BaseContainer_border__rAINg BaseContainer_border-left__eD_86 paddingLeft-xs w-100\"><p class=\"text Text_text__MC1lC display-lg Text_level-display-lg__WgPqw\"><span style=\"color: rgb(214, 43, 31);\"><span style=\"white-space: nowrap;\">160</span>B+</span></p><h6 class=\"text Text_text__MC1lC withSpacingMarginBottom marginBottom-none\">Assets under our protection</h6></div></div></div><div class=\"BaseContainer_baseContainer__fIo3i width-xs-12 width-lg-4 flex align-start justify-start direction-column column AnimatedContainer_container__EyevB AnimatedContainer_fade-slide-up__rDM_c AnimatedContainer_animate__yRFy5\"><div class=\"BaseContainer_baseContainer__fIo3i Wrapper_blockWrapper___RYjd\"><div class=\"BaseContainer_baseContainer__fIo3i BaseContainer_border__rAINg BaseContainer_border-left__eD_86 paddingLeft-xs w-100\"><p class=\"text Text_text__MC1lC display-lg Text_level-display-lg__WgPqw\"><span style=\"color: rgb(214, 43, 31);\"><span style=\"white-space: nowrap;\">35</span>K+</span></p><h6 class=\"text Text_text__MC1lC withSpacingMarginBottom marginBottom-none\">Clients we serve</h6></div></div></div><div class=\"BaseContainer_baseContainer__fIo3i width-xs-12 width-lg-4 flex align-start justify-start direction-column column AnimatedContainer_container__EyevB AnimatedContainer_fade-slide-up__rDM_c AnimatedContainer_animate__yRFy5\"><div class=\"BaseContainer_baseContainer__fIo3i Wrapper_blockWrapper___RYjd\"><div class=\"BaseContainer_baseContainer__fIo3i BaseContainer_border__rAINg BaseContainer_border-left__eD_86 paddingLeft-xs w-100\"><p class=\"text Text_text__MC1lC display-lg Text_level-display-lg__WgPqw\"><span style=\"color: rgb(214, 43, 31);\">1:<span style=\"white-space: nowrap;\">7</span></span></p><h6 class=\"text Text_text__MC1lC withSpacingMarginBottom marginBottom-none\">Manager to security officer ratio</h6></div></div></div></div></div></div>",
+    "rect": {
+      "x": 0,
+      "y": 223,
+      "width": 1521,
+      "height": 352
+    },
+    "computedStyles": {
+      "display": "flex",
+      "position": "relative",
+      "top": "0px",
+      "right": "0px",
+      "bottom": "0px",
+      "left": "0px",
+      "width": "1520.8px",
+      "height": "351.6px",
+      "padding": "32px 20px 144px",
+      "box-sizing": "border-box",
+      "background": "rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box",
+      "font-family": "NeueHelvetica, Helvetica, Arial, system-ui, sans-serif",
+      "font-size": "16px",
+      "line-height": "24px",
+      "text-decoration": "none",
+      "justify-content": "center",
+      "align-items": "center",
+      "z-index": "2",
+      "transition": "all"
+    },
+    "cssRules": [
+      {
+        "selector": ".ResponsiveContainer_responsiveContainer__eB_7T .ResponsiveContainer_row__ldOYM",
+        "css": "margin: 0px auto; z-index: 2; position: relative;"
+      },
+      {
+        "selector": ".ResponsiveContainer_responsiveContainer__eB_7T:not(.ResponsiveContainer_fluid__N_BUi) .ResponsiveContainer_row__ldOYM",
+        "css": "max-width: var(--container-max-width); padding-left: var(--container-gutter); padding-right: var(--container-gutter);"
+      },
+      {
+        "selector": "&:only-child",
+        "css": "display: none !important;"
+      },
+      {
+        "selector": "&:only-child",
+        "css": "display: none !important;"
+      },
+      {
+        "selector": "&, & .swiper-slide-active",
+        "css": "pointer-events: auto;"
+      },
+      {
+        "selector": "&, & .swiper-slide-active",
+        "css": "pointer-events: auto;"
+      },
+      {
+        "selector": "*, ::after, ::before",
+        "css": "box-sizing: border-box;"
+      },
+      {
+        "selector": "*",
+        "css": "margin: 0px;"
+      },
+      {
+        "selector": ".width-12",
+        "css": "width: 100%;"
+      },
+      {
+        "selector": ".paddingTop-sm",
+        "css": "padding-top: var(--spacing-sm);"
+      },
+      {
+        "selector": ".paddingBottom-xl",
+        "css": "padding-bottom: var(--spacing-xl);"
+      },
+      {
+        "selector": ".d-flex, .flex",
+        "css": "display: flex;"
+      },
+      {
+        "selector": ".align-center",
+        "css": "align-items: center;"
+      },
+      {
+        "selector": ".justify-center",
+        "css": "justify-content: center;"
+      }
+    ]
+  },
+  {
+    "id": "cap_momzv8w5_fxwfvt",
+    "selector": "div.BaseContainer_baseContainer__fIo3i",
+    "label": "Exactly where and how you need us to be …",
+    "tag": "div",
+    "url": "https://www.garda.com/solutions",
+    "title": "Security Solutions & Services | GardaWorld Security",
+    "timestamp": "2026-05-01T14:14:46.469Z",
+    "innerText": "Exactly where and how you need us to be\n\nWe are always up to date on the local regulations and certifications in your area. Our teams are also fluent in the customs and culture of your community.\n\nContact your local branch",
+    "outerHTML": "<div class=\"BaseContainer_baseContainer__fIo3i flex justify-space-between direction-xs-column direction-lg-row gap-xs-sm gap-lg-undefined columns\"><div class=\"BaseContainer_baseContainer__fIo3i width-xs-12 width-lg-5 flex align-start justify-start direction-column column AnimatedContainer_container__EyevB AnimatedContainer_fade-slide-up__rDM_c AnimatedContainer_animate__yRFy5\"><div class=\"BaseContainer_baseContainer__fIo3i Wrapper_blockWrapper___RYjd\"><div class=\"BaseContainer_baseContainer__fIo3i w-100\"><h2 class=\"text Text_text__MC1lC withSpacingMarginBottom marginBottom-none\">Exactly where and how you need us to&nbsp;be</h2></div></div></div><div class=\"BaseContainer_baseContainer__fIo3i width-xs-12 width-lg-4 flex align-start justify-center direction-column column AnimatedContainer_container__EyevB AnimatedContainer_fade-slide-up__rDM_c AnimatedContainer_animate__yRFy5\"><div class=\"BaseContainer_baseContainer__fIo3i Wrapper_blockWrapper___RYjd\"><div class=\"BaseContainer_baseContainer__fIo3i w-100\"><p class=\"text Text_text__MC1lC body-lg Text_level-body-lg__BCd_4 withSpacingMarginBottom marginBottom-none\">We are always up to date on the local regulations and certifications in your area. Our teams are also fluent in the customs and culture of your community.</p></div></div><div class=\"BaseContainer_baseContainer__fIo3i Wrapper_blockWrapper___RYjd\"><div class=\"Spacer_spacer__kArKc Spacer_size-xs__gaaq_ w-100\"></div></div><div class=\"BaseContainer_baseContainer__fIo3i Wrapper_blockWrapper___RYjd\"><a class=\"Button_button__VciRd Button_variant-tertiary___mfC9 Button_icon-arrow__E0e2t\" href=\"/locations\"><span class=\"Button_icon__oRsAP\"><svg fill=\"none\" width=\"16\" height=\"16\" viewBox=\"0 0 20 21\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M17.2555 11.2055H0V9.77693H17.2555L8.98075 1.50221L10 0.491211L20 10.4912L10 20.4912L8.98075 19.4802L17.2555 11.2055Z\" fill=\"black\"></path></svg></span><span class=\"Button_content__ntuK2\">Contact your local branch</span></a></div></div></div>",
+    "rect": {
+      "x": 20,
+      "y": 380,
+      "width": 1481,
+      "height": 134
+    },
+    "computedStyles": {
+      "display": "flex",
+      "width": "1480.8px",
+      "height": "134.4px",
+      "box-sizing": "border-box",
+      "background": "rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box",
+      "font-family": "NeueHelvetica, Helvetica, Arial, system-ui, sans-serif",
+      "font-size": "16px",
+      "line-height": "24px",
+      "text-decoration": "none",
+      "justify-content": "space-between",
+      "gap": "32px",
+      "transition": "all"
+    },
+    "cssRules": [
+      {
+        "selector": "&, & .swiper-slide-active",
+        "css": "pointer-events: auto;"
+      },
+      {
+        "selector": "&, & .swiper-slide-active",
+        "css": "pointer-events: auto;"
+      },
+      {
+        "selector": "*, ::after, ::before",
+        "css": "box-sizing: border-box;"
+      },
+      {
+        "selector": "*",
+        "css": "margin: 0px;"
+      },
+      {
+        "selector": ".d-flex, .flex",
+        "css": "display: flex;"
+      },
+      {
+        "selector": ".gap-xs-sm",
+        "css": "gap: var(--spacing-sm);",
+        "media": "(min-width: 0px)"
+      },
+      {
+        "selector": ".justify-space-between",
+        "css": "justify-content: space-between;"
+      },
+      {
+        "selector": ".direction-xs-column",
+        "css": "flex-direction: column;",
+        "media": "(min-width: 0px)"
+      },
+      {
+        "selector": ".direction-lg-row",
+        "css": "flex-direction: row;",
+        "media": "(min-width: 1024px)"
+      }
+    ]
+  }
+]

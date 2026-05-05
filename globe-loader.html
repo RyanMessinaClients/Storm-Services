@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Globe Loader</title>
+<script src="https://unpkg.com/three@0.158.0/build/three.min.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    width: 100%; height: 100%;
+    background: #000;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+  }
+  #stage {
+    position: relative;
+    width: 800px; height: 800px;
+    flex-shrink: 0;
+  }
+  #globeCanvas {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    display: block;
+  }
+  /* Whirl SVG rings — layered on top */
+  #whirl {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+  }
+</style>
+</head>
+<body>
+<div id="stage">
+  <canvas id="globeCanvas"></canvas>
+
+  <!-- Whirl effect: multiple rotating SVG arcs -->
+  <svg id="whirl" viewBox="0 0 800 800">
+    <defs>
+      <!-- Radial fade for whirl arms -->
+      <radialGradient id="rg1" cx="50%" cy="50%" r="50%">
+        <stop offset="55%" stop-color="white" stop-opacity="0"/>
+        <stop offset="78%" stop-color="white" stop-opacity="0.55"/>
+        <stop offset="88%" stop-color="white" stop-opacity="0.12"/>
+        <stop offset="100%" stop-color="white" stop-opacity="0"/>
+      </radialGradient>
+      <radialGradient id="rg2" cx="50%" cy="50%" r="50%">
+        <stop offset="60%" stop-color="white" stop-opacity="0"/>
+        <stop offset="80%" stop-color="white" stop-opacity="0.3"/>
+        <stop offset="92%" stop-color="white" stop-opacity="0.06"/>
+        <stop offset="100%" stop-color="white" stop-opacity="0"/>
+      </radialGradient>
+      <radialGradient id="rg3" cx="50%" cy="50%" r="50%">
+        <stop offset="68%" stop-color="white" stop-opacity="0"/>
+        <stop offset="84%" stop-color="white" stop-opacity="0.18"/>
+        <stop offset="94%" stop-color="white" stop-opacity="0.03"/>
+        <stop offset="100%" stop-color="white" stop-opacity="0"/>
+      </radialGradient>
+
+      <!-- Conic whirl mask using clip paths -->
+      <clipPath id="topHalf"><rect x="0" y="0" width="800" height="400"/></clipPath>
+      <clipPath id="botHalf"><rect x="0" y="400" width="800" height="400"/></clipPath>
+    </defs>
+
+    <!-- Ring 1: tight orbit — fast -->
+    <g id="ring1" style="transform-origin:400px 400px">
+      <!-- Full ring base -->
+      <circle cx="400" cy="400" r="335" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+      <!-- Arc highlight — rotates -->
+      <path id="arc1a" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="1.5" stroke-linecap="round"/>
+      <path id="arc1b" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1" stroke-linecap="round"/>
+    </g>
+
+    <!-- Ring 2: medium orbit — medium speed, opposite -->
+    <g id="ring2" style="transform-origin:400px 400px">
+      <circle cx="400" cy="400" r="360" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+      <path id="arc2a" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="1.2" stroke-linecap="round"/>
+      <path id="arc2b" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="0.8" stroke-linecap="round"/>
+    </g>
+
+    <!-- Ring 3: outer orbit — slowest -->
+    <g id="ring3" style="transform-origin:400px 400px">
+      <circle cx="400" cy="400" r="390" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="0.8"/>
+      <path id="arc3a" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="1" stroke-linecap="round"/>
+    </g>
+
+    <!-- Inner tight ring -->
+    <g id="ring4" style="transform-origin:400px 400px">
+      <circle cx="400" cy="400" r="308" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="0.8"/>
+      <path id="arc4a" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1" stroke-linecap="round"/>
+    </g>
+
+    <!-- Radial glow overlay -->
+    <circle cx="400" cy="400" r="400" fill="url(#rg1)" style="mix-blend-mode:screen"/>
+    <circle cx="400" cy="400" r="400" fill="url(#rg2)" style="mix-blend-mode:screen"/>
+
+    <!-- Subtle particle dots on ring 1 -->
+    <circle id="dot1" r="2.5" fill="white" opacity="0.9"/>
+    <circle id="dot2" r="1.8" fill="white" opacity="0.6"/>
+    <circle id="dot3" r="2" fill="white" opacity="0.75"/>
+    <circle id="dot4" r="1.5" fill="white" opacity="0.5"/>
+
+    <!-- Subtle scan line sweep -->
+    <defs>
+      <linearGradient id="sweep" x1="0" y1="0" x2="1" y2="0" gradientUnits="objectBoundingBox">
+        <stop offset="0%" stop-color="white" stop-opacity="0"/>
+        <stop offset="60%" stop-color="white" stop-opacity="0.04"/>
+        <stop offset="80%" stop-color="white" stop-opacity="0.09"/>
+        <stop offset="100%" stop-color="white" stop-opacity="0"/>
+      </linearGradient>
+    </defs>
+    <circle cx="400" cy="400" r="400" fill="url(#sweep)" id="sweepCircle" style="mix-blend-mode:screen"/>
+  </svg>
+</div>
+
+<script>
+// ── THREE.JS GLOBE ──────────────────────────────────────────
+const canvas = document.getElementById('globeCanvas');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setClearColor(0x000000, 1);
+renderer.setSize(800, 800);
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
+camera.position.z = 2.7;
+
+// ── STAR FIELD ──────────────────────────────────────────────
+const starGeo = new THREE.BufferGeometry();
+const starPos = new Float32Array(8000 * 3);
+for (let i = 0; i < starPos.length; i++) starPos[i] = (Math.random() - 0.5) * 90;
+starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
+scene.add(new THREE.Points(starGeo, new THREE.PointsMaterial({
+  color: 0xffffff, size: 0.05, transparent: true, opacity: 0.55, sizeAttenuation: true
+})));
+
+// ── BUILD GLOBE TEXTURE ─────────────────────────────────────
+// Full monochrome wireframe: white lines on black, real coastlines
+const W = 4096, H = 2048;
+const tc = document.createElement('canvas');
+tc.width = W; tc.height = H;
+const tx = tc.getContext('2d');
+
+// Pure black base
+tx.fillStyle = '#000';
+tx.fillRect(0, 0, W, H);
+
+function px(lon, lat) {
+  return [((lon + 180) / 360) * W, ((90 - lat) / 180) * H];
+}
+
+// ── GRID LINES (faint) ──────────────────────────────────────
+for (let lat = -80; lat <= 80; lat += 10) {
+  const [, y] = px(0, lat);
+  tx.beginPath(); tx.moveTo(0, y); tx.lineTo(W, y);
+  const isEq = lat === 0;
+  tx.strokeStyle = isEq ? 'rgba(255,255,255,0.35)' : 'rgba(255,255,255,0.1)';
+  tx.lineWidth = isEq ? 1.5 : 0.7;
+  tx.stroke();
+}
+for (let lon = -180; lon < 180; lon += 10) {
+  const [x] = px(lon, 0);
+  tx.beginPath(); tx.moveTo(x, 0); tx.lineTo(x, H);
+  const isPm = lon === 0;
+  tx.strokeStyle = isPm ? 'rgba(255,255,255,0.35)' : 'rgba(255,255,255,0.1)';
+  tx.lineWidth = isPm ? 1.5 : 0.7;
+  tx.stroke();
+}
+
+// ── COASTLINE DRAWING ───────────────────────────────────────
+function coast(pts, lw, alpha) {
+  tx.beginPath();
+  pts.forEach(([lo, la], i) => {
+    const [x, y] = px(lo, la);
+    i === 0 ? tx.moveTo(x, y) : tx.lineTo(x, y);
+  });
+  tx.closePath();
+  tx.strokeStyle = `rgba(255,255,255,${alpha})`;
+  tx.lineWidth = lw;
+  tx.lineJoin = 'round';
+  tx.stroke();
+}
+
+const lw = 2.4, a = 0.88;
+
+// NORTH AMERICA
+coast([[-168,72],[-162,70],[-155,60],[-152,58],[-148,60],[-141,60],[-135,58],[-130,54],[-128,50],[-124,49],[-124,47],[-124,45],[-122,37],[-118,34],[-117,32],[-105,20],[-90,15],[-85,11],[-83,9],[-77,8],[-62,9],[-61,10],[-64,18],[-67,17],[-72,18],[-80,25],[-80,32],[-75,35],[-76,37],[-76,39],[-74,40],[-72,41],[-70,43],[-67,45],[-65,44],[-60,46],[-54,47],[-53,47],[-56,51],[-60,54],[-63,58],[-64,63],[-70,63],[-78,68],[-85,68],[-95,72],[-120,70],[-140,68],[-168,72]], lw, a);
+
+// GREAT LAKES (schematic)
+coast([[-84,46],[-83,46],[-83,42],[-76,44],[-76,43],[-79,43],[-79,44],[-84,46]], lw*0.7, a*0.5);
+
+// GREENLAND
+coast([[-73,76],[-66,76],[-52,70],[-44,60],[-44,59],[-48,61],[-54,67],[-60,72],[-68,76],[-73,76]], lw*0.85, a);
+
+// CUBA (schematic)
+coast([[-84,22],[-82,22],[-78,20],[-74,20],[-74,22],[-78,23],[-82,23],[-84,22]], lw*0.6, a*0.7);
+
+// SOUTH AMERICA
+coast([[-78,12],[-73,10],[-62,11],[-60,5],[-50,0],[-48,-4],[-35,-5],[-34,-8],[-35,-12],[-38,-13],[-39,-17],[-40,-21],[-43,-23],[-44,-24],[-48,-28],[-52,-33],[-55,-35],[-58,-38],[-62,-38],[-65,-42],[-66,-46],[-66,-51],[-68,-54],[-70,-56],[-72,-50],[-72,-46],[-70,-42],[-72,-38],[-70,-32],[-70,-28],[-70,-18],[-75,-10],[-77,0],[-78,2],[-78,12]], lw, a);
+
+// EUROPE
+coast([[-10,36],[-9,38],[-9,40],[-8,44],[-2,44],[0,46],[2,44],[4,48],[2,52],[0,51],[1,52],[2,53],[5,52],[6,55],[8,57],[5,58],[6,58],[8,58],[10,56],[10,58],[12,56],[14,56],[14,58],[16,57],[16,55],[18,55],[20,56],[22,56],[22,58],[24,60],[26,64],[28,70],[26,72],[22,70],[18,68],[14,67],[12,64],[10,63],[8,62],[6,58],[4,56],[2,52],[-2,52],[-4,50],[-6,50],[-5,48],[-2,47],[-1,44],[-4,44],[-5,42],[-9,40],[-9,38],[-8,36],[-6,36],[-2,36],[0,36],[2,42],[4,44],[8,44],[12,44],[14,42],[16,40],[18,40],[20,38],[22,38],[24,38],[26,40],[28,38],[26,36],[24,36],[22,36],[20,36],[18,36],[16,36],[14,36],[12,36],[10,36],[-10,36]], lw, a);
+
+// UK (schematic)
+coast([[-6,50],[-4,50],[-2,52],[0,51],[-2,54],[-4,54],[-6,54],[-6,52],[-6,50]], lw*0.75, a*0.8);
+
+// ICELAND
+coast([[-24,64],[-14,64],[-13,66],[-16,66],[-22,66],[-24,64]], lw*0.7, a*0.7);
+
+// AFRICA
+coast([[-17,15],[-16,12],[-15,11],[-14,10],[-16,6],[-14,4],[-9,4],[-6,4],[0,5],[4,5],[8,4],[10,4],[14,4],[18,4],[22,4],[26,4],[30,4],[34,0],[36,-1],[38,-4],[40,-8],[40,-12],[38,-16],[36,-18],[34,-22],[32,-26],[30,-30],[28,-34],[26,-34],[22,-34],[18,-34],[14,-34],[10,-24],[6,-16],[2,-8],[-2,4],[-6,4],[-8,6],[-10,8],[-12,10],[-14,10],[-16,12],[-17,15]], lw, a);
+
+// MADAGASCAR
+coast([[44,-12],[50,-12],[50,-16],[48,-20],[44,-24],[44,-20],[44,-16],[44,-12]], lw*0.7, a*0.75);
+
+// ARABIAN PENINSULA
+coast([[32,28],[36,24],[38,20],[40,16],[44,12],[48,14],[50,18],[56,24],[58,22],[60,22],[58,20],[56,14],[52,12],[48,12],[44,14],[42,12],[40,10],[38,12],[36,16],[34,20],[32,22],[32,28]], lw*0.9, a);
+
+// ASIA — main body
+coast([[26,64],[36,64],[46,66],[54,68],[68,70],[80,72],[90,72],[100,70],[110,68],[120,66],[130,64],[140,68],[150,60],[160,60],[168,54],[168,50],[165,46],[160,46],[155,50],[150,46],[142,46],[138,44],[136,42],[132,40],[130,34],[128,32],[122,32],[120,28],[118,24],[114,22],[108,20],[104,12],[100,4],[98,6],[96,4],[94,22],[88,22],[86,26],[80,26],[76,22],[72,22],[68,22],[66,24],[62,22],[58,22],[56,24],[54,22],[52,18],[48,14],[44,12],[40,16],[36,22],[32,28],[28,36],[26,38],[28,40],[26,42],[28,44],[26,46],[28,48],[26,52],[28,56],[26,60],[26,64]], lw, a);
+
+// INDIA
+coast([[68,36],[72,22],[68,22],[66,24],[64,22],[66,20],[68,18],[70,16],[72,14],[76,8],[78,8],[80,8],[80,10],[82,14],[80,20],[78,22],[80,26],[82,28],[84,28],[86,26],[88,26],[88,22],[90,22],[92,22],[92,24],[94,22],[92,26],[90,28],[88,30],[86,26],[84,28],[80,30],[78,32],[76,32],[74,34],[72,34],[70,34],[68,36]], lw*0.9, a);
+
+// SRI LANKA
+coast([[80,10],[82,8],[82,6],[80,6],[80,8],[80,10]], lw*0.6, a*0.7);
+
+// SOUTHEAST ASIA — Indochina
+coast([[100,22],[102,22],[104,22],[106,22],[106,18],[104,14],[102,12],[100,10],[98,8],[98,10],[100,14],[102,16],[104,18],[104,20],[102,20],[100,18],[98,16],[96,16],[94,22],[98,22],[100,22]], lw*0.8, a*0.85);
+
+// BORNEO (schematic)
+coast([[108,6],[118,6],[118,4],[116,2],[114,2],[110,2],[108,4],[108,6]], lw*0.75, a*0.75);
+
+// SUMATRA (schematic)
+coast([[96,4],[106,0],[106,-4],[104,-4],[100,-2],[96,2],[96,4]], lw*0.75, a*0.75);
+
+// JAVA (schematic)
+coast([[106,-6],[114,-8],[114,-6],[110,-6],[106,-6]], lw*0.65, a*0.7);
+
+// KOREA (schematic)
+coast([[126,34],[128,34],[130,36],[130,38],[128,38],[126,36],[124,36],[126,34]], lw*0.7, a*0.8);
+
+// JAPAN — Honshu
+coast([[130,32],[132,34],[134,34],[136,34],[138,36],[138,38],[140,40],[140,42],[140,44],[138,44],[136,42],[134,40],[132,38],[130,36],[130,34],[130,32]], lw*0.8, a*0.85);
+
+// HOKKAIDO
+coast([[140,44],[142,44],[144,44],[144,46],[142,46],[140,46],[140,44]], lw*0.7, a*0.75);
+
+// KAMCHATKA (schematic)
+coast([[158,52],[162,52],[163,56],[162,60],[160,58],[158,56],[158,52]], lw*0.7, a*0.75);
+
+// SAKHALIN
+coast([[142,46],[142,48],[142,52],[144,52],[144,48],[142,46]], lw*0.65, a*0.7);
+
+// AUSTRALIA
+coast([[114,-22],[116,-20],[118,-16],[122,-14],[126,-14],[128,-14],[130,-12],[132,-12],[134,-12],[136,-12],[138,-14],[140,-18],[142,-10],[144,-14],[146,-18],[148,-18],[150,-22],[152,-24],[152,-26],[154,-28],[152,-30],[150,-34],[148,-38],[146,-38],[144,-38],[140,-38],[138,-36],[136,-34],[132,-32],[130,-32],[128,-34],[126,-34],[122,-34],[118,-30],[114,-30],[114,-26],[114,-22]], lw, a);
+
+// TASMANIA
+coast([[144,-40],[148,-42],[148,-44],[144,-44],[144,-40]], lw*0.65, a*0.7);
+
+// NEW ZEALAND — North Island
+coast([[172,-36],[178,-38],[178,-40],[174,-40],[172,-38],[172,-36]], lw*0.7, a*0.72);
+// New Zealand — South Island
+coast([[168,-44],[172,-44],[174,-46],[172,-48],[168,-46],[168,-44]], lw*0.7, a*0.72);
+
+// PHILIPPINES (schematic)
+coast([[118,18],[122,18],[122,16],[120,14],[118,10],[116,8],[116,10],[118,14],[118,18]], lw*0.65, a*0.7);
+
+// TAIWAN
+coast([[120,24],[122,24],[122,22],[120,22],[120,24]], lw*0.6, a*0.65);
+
+// SRI LANKA already done above
+
+const earthTex = new THREE.CanvasTexture(tc);
+earthTex.anisotropy = 8;
+
+// ── EARTH MESH ──────────────────────────────────────────────
+const earthMat = new THREE.MeshStandardMaterial({
+  map: earthTex,
+  emissiveMap: earthTex,
+  emissive: new THREE.Color(0xffffff),
+  emissiveIntensity: 0.55,
+  roughness: 1,
+  metalness: 0,
+});
+const earth = new THREE.Mesh(new THREE.SphereGeometry(1, 128, 128), earthMat);
+scene.add(earth);
+
+// ── ATMOSPHERE SHADER ───────────────────────────────────────
+const atmMat = new THREE.ShaderMaterial({
+  uniforms: {
+    coeff: { value: 0.72 },
+    power: { value: 5.8 },
+    glowColor: { value: new THREE.Color(0xffffff) },
+  },
+  vertexShader: `
+    varying vec3 vNormal; varying vec3 vView;
+    void main() {
+      vNormal = normalize(normalMatrix * normal);
+      vView = normalize(-(modelViewMatrix * vec4(position,1.0)).xyz);
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0);
+    }
+  `,
+  fragmentShader: `
+    uniform float coeff; uniform float power; uniform vec3 glowColor;
+    varying vec3 vNormal; varying vec3 vView;
+    void main() {
+      float i = pow(coeff - dot(vNormal, vView), power);
+      gl_FragColor = vec4(glowColor, i * 0.7);
+    }
+  `,
+  side: THREE.FrontSide, blending: THREE.AdditiveBlending,
+  transparent: true, depthWrite: false,
+});
+scene.add(new THREE.Mesh(new THREE.SphereGeometry(1.06, 48, 48), atmMat));
+
+// Outer backside halo
+const haloMat = new THREE.ShaderMaterial({
+  uniforms: {
+    coeff: { value: 0.65 }, power: { value: 6.5 },
+    glowColor: { value: new THREE.Color(0xaabbff) },
+  },
+  vertexShader: `
+    varying vec3 vNormal; varying vec3 vView;
+    void main() {
+      vNormal = normalize(normalMatrix * normal);
+      vView = normalize(-(modelViewMatrix * vec4(position,1.0)).xyz);
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0);
+    }
+  `,
+  fragmentShader: `
+    uniform float coeff; uniform float power; uniform vec3 glowColor;
+    varying vec3 vNormal; varying vec3 vView;
+    void main() {
+      float i = pow(coeff - dot(vNormal, vView), power);
+      gl_FragColor = vec4(glowColor, i * 0.55);
+    }
+  `,
+  side: THREE.BackSide, blending: THREE.AdditiveBlending,
+  transparent: true, depthWrite: false,
+});
+scene.add(new THREE.Mesh(new THREE.SphereGeometry(1.18, 48, 48), haloMat));
+
+// Lights — uniform soft white for monochrome clarity
+scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+const d1 = new THREE.DirectionalLight(0xffffff, 0.6); d1.position.set(4,2,3); scene.add(d1);
+const d2 = new THREE.DirectionalLight(0xffffff, 0.3); d2.position.set(-3,-1,-2); scene.add(d2);
+
+// ── WHIRL ANIMATION ─────────────────────────────────────────
+// Arc helper: returns SVG arc path string for a partial circle
+function arcPath(cx, cy, r, startDeg, endDeg) {
+  const s = startDeg * Math.PI / 180;
+  const e = endDeg   * Math.PI / 180;
+  const x1 = cx + r * Math.cos(s), y1 = cy + r * Math.sin(s);
+  const x2 = cx + r * Math.cos(e), y2 = cy + r * Math.sin(e);
+  const large = (endDeg - startDeg > 180) ? 1 : 0;
+  return `M ${x1} ${y1} A ${r} ${r} 0 ${large} 1 ${x2} ${y2}`;
+}
+
+const CX = 400, CY = 400;
+const arc1a = document.getElementById('arc1a');
+const arc1b = document.getElementById('arc1b');
+const arc2a = document.getElementById('arc2a');
+const arc2b = document.getElementById('arc2b');
+const arc3a = document.getElementById('arc3a');
+const arc4a = document.getElementById('arc4a');
+const dot1  = document.getElementById('dot1');
+const dot2  = document.getElementById('dot2');
+const dot3  = document.getElementById('dot3');
+const dot4  = document.getElementById('dot4');
+const ring1 = document.getElementById('ring1');
+const ring2 = document.getElementById('ring2');
+const ring3 = document.getElementById('ring3');
+const ring4 = document.getElementById('ring4');
+
+let t = 0;
+
+function animateWhirl() {
+  // Ring 1: fast CCW — 60° bright arc
+  const r1 = t * 180;
+  arc1a.setAttribute('d', arcPath(CX, CY, 335, r1, r1 + 60));
+  arc1b.setAttribute('d', arcPath(CX, CY, 335, r1 + 65, r1 + 140));
+
+  // Opposing short arc
+  arc2a.setAttribute('d', arcPath(CX, CY, 360, -r1 * 0.7 + 10, -r1 * 0.7 + 55));
+  arc2b.setAttribute('d', arcPath(CX, CY, 360, -r1 * 0.7 + 60, -r1 * 0.7 + 130));
+
+  // Ring 3 — slow, long arc
+  const r3 = t * 40;
+  arc3a.setAttribute('d', arcPath(CX, CY, 390, r3, r3 + 100));
+
+  // Ring 4 — medium, tiny arc
+  const r4 = t * 130 + 180;
+  arc4a.setAttribute('d', arcPath(CX, CY, 308, r4, r4 + 40));
+
+  // Dot positions on ring 1
+  const a1 = (r1 + 30) * Math.PI / 180;
+  dot1.setAttribute('cx', CX + 335 * Math.cos(a1));
+  dot1.setAttribute('cy', CY + 335 * Math.sin(a1));
+
+  const a2 = (r1 + 105) * Math.PI / 180;
+  dot2.setAttribute('cx', CX + 335 * Math.cos(a2));
+  dot2.setAttribute('cy', CY + 335 * Math.sin(a2));
+
+  // Dots on ring 2
+  const a3 = (-r1 * 0.7 + 32) * Math.PI / 180;
+  dot3.setAttribute('cx', CX + 360 * Math.cos(a3));
+  dot3.setAttribute('cy', CY + 360 * Math.sin(a3));
+
+  const a4 = (-r1 * 0.7 + 95) * Math.PI / 180;
+  dot4.setAttribute('cx', CX + 360 * Math.cos(a4));
+  dot4.setAttribute('cy', CY + 360 * Math.sin(a4));
+
+  t += 0.004;
+}
+
+// ── RENDER LOOP ─────────────────────────────────────────────
+let rotY = 0;
+function animate() {
+  requestAnimationFrame(animate);
+  rotY += 0.004;
+  earth.rotation.y = rotY;
+  animateWhirl();
+  renderer.render(scene, camera);
+}
+animate();
+</script>
+</body>
+</html>
