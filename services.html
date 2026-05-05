@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Services | Storm Colleton & Associates</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<style>
+:root{
+  --bg:#07070e;--bg2:#0c0c18;--card:#12121e;--card2:#161628;
+  --border:rgba(255,255,255,0.07);--border-b:rgba(94,106,210,0.22);
+  --text:#f7f8f8;--text-2:rgba(247,248,248,0.6);--text-3:rgba(247,248,248,0.32);--text-4:rgba(247,248,248,0.16);
+  --blue:#5e6ad2;--blue-b:#7b8cef;--blue-dim:rgba(94,106,210,0.13);--cyan:#4cc9f0;
+  --font:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  --r:6px;--gutter:clamp(20px,5vw,80px);--max:1280px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:15px;line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:9998;opacity:0.5;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:900;height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 var(--gutter);border-bottom:1px solid transparent;transition:background .35s,border-color .35s;}
+nav.scrolled{background:rgba(7,7,14,0.9);border-color:var(--border);backdrop-filter:blur(20px) saturate(1.6);}
+nav{transition:transform .35s cubic-bezier(.4,0,.2,1),background .35s,border-color .35s;}
+nav.nav-hidden{transform:translateY(-100%);}
+.nav-logo{display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--text);font-size:14px;font-weight:600;letter-spacing:-0.01em;}
+.nav-mark{width:24px;height:24px;background:linear-gradient(135deg,var(--blue),var(--blue-b));border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.nav-mark svg{width:13px;height:13px;}
+.nav-links{display:flex;list-style:none;position:absolute;left:50%;transform:translateX(-50%);}
+.nav-links a{color:var(--text-2);text-decoration:none;font-size:13px;font-weight:450;padding:6px 14px;border-radius:5px;transition:color .15s,background .15s;}
+.nav-links a:hover{color:var(--text);background:rgba(255,255,255,0.05);}
+.nav-links a.active{color:var(--text);}
+.nav-right{display:flex;gap:8px;align-items:center;}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 16px;font-size:13px;font-weight:500;border-radius:5px;text-decoration:none;cursor:pointer;border:none;transition:all .18s;font-family:var(--font);}
+.btn-ghost{background:transparent;color:var(--text-2);border:1px solid var(--border-b);}
+.btn-ghost:hover{color:var(--text);background:rgba(255,255,255,0.05);}
+.btn-blue{background:var(--blue);color:#fff;border:1px solid rgba(255,255,255,0.1);box-shadow:0 0 20px rgba(94,106,210,0.28);}
+.btn-blue:hover{background:var(--blue-b);box-shadow:0 0 30px rgba(94,106,210,0.45);}
+.divider{border:none;border-top:1px solid var(--border);margin:0;}
+.wrap{max-width:var(--max);margin:0 auto;padding:0 var(--gutter);}
+.section-eyebrow{font-size:11px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--blue-b);margin-bottom:14px;}
+.section-h2{font-size:clamp(32px,4vw,52px);font-weight:700;letter-spacing:-0.03em;line-height:1.1;}
+.section-body{font-size:16px;color:var(--text-2);line-height:1.7;max-width:600px;}
+.grad{background:linear-gradient(90deg,var(--text) 0%,var(--blue-b) 55%,var(--cyan) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+
+/* HERO */
+#sv-hero{position:relative;padding:180px 0 100px;background:var(--bg);overflow:hidden;}
+.sv-hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(94,106,210,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(94,106,210,0.04) 1px,transparent 1px);background-size:60px 60px;pointer-events:none;}
+.sv-hero-glow{position:absolute;top:0;right:10%;width:500px;height:500px;background:radial-gradient(ellipse,rgba(94,106,210,0.07) 0%,transparent 70%);pointer-events:none;}
+
+/* SERVICES GRID */
+#sv-services{padding:100px 0;background:var(--bg2);}
+.sv-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-top:56px;}
+.sv-card{background:var(--card);padding:36px 30px;display:flex;flex-direction:column;gap:14px;position:relative;overflow:hidden;transition:background .25s;}
+.sv-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,var(--blue),transparent);transform:scaleX(0);transform-origin:left;transition:transform .3s;}
+.sv-card:hover{background:var(--card2);}
+.sv-card:hover::after{transform:scaleX(1);}
+.sv-icon{width:36px;height:36px;border-radius:8px;background:var(--blue-dim);border:1px solid var(--border-b);display:flex;align-items:center;justify-content:center;color:var(--blue-b);}
+.sv-title{font-size:16px;font-weight:600;letter-spacing:-0.01em;}
+.sv-desc{font-size:13px;color:var(--text-2);line-height:1.72;flex:1;}
+.sv-link{font-size:12px;font-weight:500;color:var(--blue-b);text-decoration:none;display:flex;align-items:center;gap:4px;transition:gap .2s;margin-top:4px;}
+.sv-card:hover .sv-link{gap:8px;}
+
+/* CONTACT */
+#sv-contact{padding:100px 0 120px;background:var(--bg);}
+.sv-contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start;margin-top:56px;}
+.sv-info-list{display:flex;flex-direction:column;gap:2px;}
+.sv-info-item{display:flex;gap:16px;align-items:flex-start;padding:20px 0;border-bottom:1px solid var(--border);}
+.sv-info-item:last-child{border-bottom:none;}
+.sv-info-icon{width:36px;height:36px;border-radius:8px;background:var(--blue-dim);border:1px solid var(--border-b);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--blue-b);}
+.sv-info-label{font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-3);margin-bottom:4px;}
+.sv-info-value{font-size:14px;color:var(--text-2);}
+.sv-info-value a{color:var(--blue-b);text-decoration:none;}
+.sv-form{display:flex;flex-direction:column;gap:14px;}
+.sv-input{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:12px 16px;font-size:14px;color:var(--text);font-family:var(--font);outline:none;transition:border-color .15s;width:100%;}
+.sv-input:focus{border-color:var(--border-b);}
+.sv-input::placeholder{color:var(--text-4);}
+.sv-textarea{min-height:120px;resize:vertical;}
+
+/* FOOTER */
+footer{padding:32px var(--gutter);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+.footer-copy{font-size:12px;color:var(--text-3);}
+.footer-back{font-size:12px;color:var(--text-3);text-decoration:none;transition:color .15s;}
+.footer-back:hover{color:var(--text);}
+
+/* ANIMATIONS */
+.gs-up{opacity:0;transform:translateY(24px);}
+.gs-fade{opacity:0;}
+@keyframes gsap-fallback{to{opacity:1;transform:none;}}
+.gs-up,.gs-fade{animation:gsap-fallback 0s 2s forwards;}
+
+/* MOBILE / TABLET */
+.nav-toggle{display:none;width:36px;height:36px;align-items:center;justify-content:center;background:transparent;border:1px solid var(--border-b);border-radius:6px;cursor:pointer;color:var(--text);}
+.nav-toggle svg{width:18px;height:18px;}
+
+@media (max-width: 1024px){
+  .nav-right .btn-ghost{display:none;}
+  .sv-grid{grid-template-columns:repeat(2,1fr) !important;}
+  .sv-contact-grid,#sv-contact .wrap > div{grid-template-columns:1fr !important;gap:48px !important;}
+}
+
+@media (max-width: 720px){
+  :root{--gutter:18px;}
+  nav{height:54px;}
+  .nav-links{display:none;position:fixed;top:54px;left:0;right:0;flex-direction:column;background:rgba(7,7,14,0.98);backdrop-filter:blur(24px);border-bottom:1px solid var(--border);padding:18px var(--gutter);gap:14px;transform:none !important;}
+  .nav-links.open{display:flex;}
+  .nav-links li{width:100%;}
+  .nav-links a{display:block;padding:10px 0;font-size:15px;border-bottom:1px solid var(--border);}
+  .nav-right{gap:8px;}
+  .nav-right .btn-blue{padding:8px 14px !important;font-size:12px !important;}
+  .nav-toggle{display:inline-flex;}
+  #sv-hero,#sv-services,#sv-contact{padding:60px 0 !important;}
+  .sv-grid{grid-template-columns:1fr !important;}
+  .sv-form > div[style*="grid-template-columns"]{grid-template-columns:1fr !important;}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="mainNav">
+  <a href="index.html" class="nav-logo">
+    <div class="nav-mark">
+      <svg viewBox="0 0 13 13" fill="none"><path d="M6.5 1L12 4v5L6.5 12 1 9V4L6.5 1z" stroke="white" stroke-width="1.3" fill="none"/><circle cx="6.5" cy="6.5" r="1.6" fill="white"/></svg>
+    </div>
+    <span>Storm Colleton & Associates</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="storm-colleton.html">Storm Colleton</a></li>
+    <li><a href="faith-based.html" style="color:var(--blue-b);">Faith-Based</a></li>
+    <li><a href="index.html#contact">Contact</a></li>
+  </ul>
+  <div class="nav-right">
+    <a href="#sv-contact" class="btn btn-ghost">Consultation</a>
+    <a href="#sv-contact" class="btn btn-blue">Request Protection</a>
+    <button class="nav-toggle" aria-label="Menu" onclick="document.querySelector('.nav-links').classList.toggle('open')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="sv-hero" data-screen-label="01 Hero">
+  <div class="sv-hero-grid"></div>
+  <div class="sv-hero-glow"></div>
+  <div class="wrap">
+    <div class="section-eyebrow gs-fade">What We Offer</div>
+    <h1 class="section-h2 gs-up" style="font-size:clamp(48px,7vw,88px);max-width:800px;">Our <span class="grad">Services</span></h1>
+    <p class="section-body gs-up" style="margin-top:20px;font-size:18px;max-width:560px;">Storm Colleton & Associates delivers a full spectrum of professional security services — tailored to your specific environment, risk level, and mission.</p>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- SERVICES -->
+<section id="sv-services" data-screen-label="02 Services">
+  <div class="wrap">
+    <div class="gs-up">
+      <div class="section-eyebrow">Full Service Offering</div>
+      <h2 class="section-h2">Protection<br><span class="grad">At Every Level</span></h2>
+    </div>
+    <div class="sv-grid">
+
+      <div class="sv-card gs-up">
+        <div class="sv-icon">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1L14 4v4c0 4-3 6.5-6 7.5C5 14.5 2 12 2 8V4L8 1z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="sv-title">Executive Protection</div>
+        <p class="sv-desc">Close personal security for public figures, corporate leaders, and private families. Domestic and international coverage.</p>
+        <a href="#sv-contact" class="sv-link">Inquire →</a>
+      </div>
+
+      <div class="sv-card gs-up">
+        <div class="sv-icon">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1L14 4v4c0 4-3 6.5-6 7.5C5 14.5 2 12 2 8V4L8 1z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M5.5 8l2 2 3-3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="sv-title">Executive Protection Training</div>
+        <p class="sv-desc">Field experience combined with classroom instruction. Master the art of executive protection with our expert-led program.</p>
+        <a href="#sv-contact" class="sv-link">Inquire →</a>
+      </div>
+
+      <div class="sv-card gs-up">
+        <div class="sv-icon">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 3h10v7H3z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M8 10v3M5 13h6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M6 6.5l1.5 1.5 3-3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="sv-title">Active Shooter Response</div>
+        <p class="sv-desc">Comprehensive planning, realistic training, and practical drills for businesses, schools, and places of worship.</p>
+        <a href="#sv-contact" class="sv-link">Inquire →</a>
+      </div>
+
+      <div class="sv-card gs-up">
+        <div class="sv-icon">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.3"/><circle cx="8" cy="8" r="2" stroke="currentColor" stroke-width="1.3"/><path d="M8 2v2M8 12v2M2 8h2M12 8h2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        </div>
+        <div class="sv-title">Security Assessments</div>
+        <p class="sv-desc">Thorough evaluations to identify potential threats and vulnerabilities. Expert recommendations to strengthen your security posture.</p>
+        <a href="#sv-contact" class="sv-link">Inquire →</a>
+      </div>
+
+      <div class="sv-card gs-up">
+        <div class="sv-icon">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 13V5l6-3 6 3v8" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><rect x="5" y="8" width="6" height="5" rx="1" stroke="currentColor" stroke-width="1.3"/></svg>
+        </div>
+        <div class="sv-title">Home Security & Safety Planning</div>
+        <p class="sv-desc">Comprehensive residential protection solutions tailored to your family's unique needs and concerns.</p>
+        <a href="#sv-contact" class="sv-link">Inquire →</a>
+      </div>
+
+      <div class="sv-card gs-up">
+        <div class="sv-icon">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="4" width="14" height="8" rx="2" stroke="currentColor" stroke-width="1.3"/><path d="M4 4V3a1 1 0 011-1h6a1 1 0 011 1v1" stroke="currentColor" stroke-width="1.3"/></svg>
+        </div>
+        <div class="sv-title">Estate & Residential Security</div>
+        <p class="sv-desc">Round-the-clock protection and prompt response for private residences and estates, 24/7.</p>
+        <a href="#sv-contact" class="sv-link">Inquire →</a>
+      </div>
+
+      <div class="sv-card gs-up">
+        <div class="sv-icon">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 12s1-3 4-3 4 3 4 3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><circle cx="6" cy="6" r="2.5" stroke="currentColor" stroke-width="1.3"/><path d="M11 7s.5-1.5 2-1.5 2 1.5 2 1.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><circle cx="13" cy="4.5" r="1.5" stroke="currentColor" stroke-width="1.2"/></svg>
+        </div>
+        <div class="sv-title">Investigative Services</div>
+        <p class="sv-desc">Elite investigative assistance and support specifically designed to fulfill our clients' unique security needs.</p>
+        <a href="#sv-contact" class="sv-link">Inquire →</a>
+      </div>
+
+      <div class="sv-card gs-up">
+        <div class="sv-icon">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 11c0-1.5 1.5-2.5 3-2.5h1M13 11c0-1.5-1.5-2.5-3-2.5h-1M8 8.5V13M5 13h6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><rect x="3" y="3" width="10" height="4" rx="1" stroke="currentColor" stroke-width="1.3"/></svg>
+        </div>
+        <div class="sv-title">Secure Transportation</div>
+        <p class="sv-desc">Outstanding executive transportation services ensuring safe passage for our clients at all times.</p>
+        <a href="#sv-contact" class="sv-link">Inquire →</a>
+      </div>
+
+      <div class="sv-card gs-up">
+        <div class="sv-icon">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="3" stroke="currentColor" stroke-width="1.3"/><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.3"/><path d="M8 2v2M8 12v2M2 8h2M12 8h2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        </div>
+        <div class="sv-title">Vulnerability & Risk Assessments</div>
+        <p class="sv-desc">Comprehensive threat analysis with expert recommendations to address and mitigate vulnerability risks.</p>
+        <a href="#sv-contact" class="sv-link">Inquire →</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- CONTACT / INQUIRE -->
+<section id="sv-contact" data-screen-label="03 Contact">
+  <div class="wrap">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start;">
+      <div class="gs-up">
+        <div class="section-eyebrow">Get Started</div>
+        <h2 class="section-h2" style="margin-bottom:16px;">Request a<br><span class="grad">Service</span></h2>
+        <p class="section-body" style="margin-bottom:40px;">All inquiries are strictly confidential. Our team will respond within 24 hours to discuss your specific needs and build a custom protection plan.</p>
+        <div class="sv-info-list">
+          <div class="sv-info-item">
+            <div class="sv-info-icon">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 4l6 5 6-5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><rect x="1" y="3" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.3"/></svg>
+            </div>
+            <div>
+              <div class="sv-info-label">Email</div>
+              <div class="sv-info-value"><a href="mailto:trooperstorm@hotmail.com">trooperstorm@hotmail.com</a></div>
+            </div>
+          </div>
+          <div class="sv-info-item">
+            <div class="sv-info-icon">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 2h3l1.5 3.5L6 7s1 2 3 3l1.5-1.5L14 10v3c-6 1-12-5-11-11z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+            </div>
+            <div>
+              <div class="sv-info-label">Phone</div>
+              <div class="sv-info-value"><a href="tel:+19086013176">(908) 601-3176</a></div>
+            </div>
+          </div>
+          <div class="sv-info-item">
+            <div class="sv-info-icon">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="7" r="3" stroke="currentColor" stroke-width="1.3"/><path d="M8 1C4.7 1 2 3.7 2 7c0 4.5 6 8 6 8s6-3.5 6-8c0-3.3-2.7-6-6-6z" stroke="currentColor" stroke-width="1.3"/></svg>
+            </div>
+            <div>
+              <div class="sv-info-label">Location</div>
+              <div class="sv-info-value">Aberdeen, NJ · Mon–Fri: 9:00 AM – 6:00 PM</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="gs-up">
+        <form class="sv-form" id="svForm" onsubmit="handleSvSubmit(event)">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <input class="sv-input" type="text" placeholder="First Name" required>
+            <input class="sv-input" type="text" placeholder="Last Name" required>
+          </div>
+          <input class="sv-input" type="email" placeholder="Email Address" required>
+          <input class="sv-input" type="tel" placeholder="Phone Number">
+          <input class="sv-input" type="text" placeholder="Organization / Company">
+          <select class="sv-input" style="cursor:pointer;">
+            <option value="" style="background:var(--card);">Service Type</option>
+            <option style="background:var(--card);">Executive Protection</option>
+            <option style="background:var(--card);">Secure Transportation</option>
+            <option style="background:var(--card);">Estate and Residential Protection</option>
+            <option style="background:var(--card);">Vulnerability and Risk Assessments</option>
+            <option style="background:var(--card);">Training</option>
+            <option style="background:var(--card);">Investigative Services</option>
+            <option style="background:var(--card);">Home Security & Safety Planning</option>
+            <option style="background:var(--card);">Active Shooter Response</option>
+            <option style="background:var(--card);">Faith-Based Security</option>
+            <option style="background:var(--card);">Other</option>
+          </select>
+          <textarea class="sv-input sv-textarea" placeholder="Tell us about your security needs..."></textarea>
+          <button type="submit" class="btn btn-blue" style="padding:13px;font-size:14px;justify-content:center;">Submit Request</button>
+        </form>
+        <div id="sv-form-success" style="display:none;text-align:center;padding:48px 20px;">
+          <div style="width:48px;height:48px;border-radius:50%;background:var(--blue-dim);border:1px solid var(--border-b);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 10l4 4 8-8" stroke="var(--blue-b)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div style="font-size:18px;font-weight:600;margin-bottom:8px;">Request Received</div>
+          <div style="font-size:14px;color:var(--text-2);">A specialist will contact you within 24 hours.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-copy">© 2025 Storm Colleton & Associates. All rights reserved.</div>
+  <div style="font-size:12px;color:var(--text-3);">Aberdeen, NJ &nbsp;·&nbsp; Mon–Fri: 9:00 AM – 6:00 PM</div>
+  <a href="index.html" class="footer-back">← Back to Main Site</a>
+</footer>
+
+<script>
+(() => {
+  const nav = document.getElementById('mainNav');
+  let navHideTimer = null;
+  function showNav() {
+    nav.classList.remove('nav-hidden');
+    clearTimeout(navHideTimer);
+    if (window.scrollY > 50) {
+      navHideTimer = setTimeout(() => nav.classList.add('nav-hidden'), 900);
+    }
+  }
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 50);
+    if (window.scrollY <= 50) {
+      nav.classList.remove('nav-hidden');
+      clearTimeout(navHideTimer);
+      return;
+    }
+    showNav();
+  }, { passive: true });
+  window.addEventListener('mousemove', (e) => {
+    if (e.clientY < 80) showNav();
+  }, { passive: true });
+})();
+
+function handleSvSubmit(e) {
+  e.preventDefault();
+  const form = document.getElementById('svForm');
+  const inputs = form.querySelectorAll('input,select,textarea');
+  const data = {_subject:'Service Request - Storm Colleton & Associates', _captcha:'false'};
+  inputs.forEach((el,i) => { if(el.value) data[(el.placeholder||'field_'+i).replace(/[^a-z0-9]/gi,'_')] = el.value; });
+  fetch('https://api.web3forms.com/submit', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
+    body: JSON.stringify({ access_key: '1dbc633a-5b58-4c6e-939d-9b1583eabb5f', ...data })
+  }).then(r=>r.json()).then(d=>{ form.style.display='none'; document.getElementById('sv-form-success').style.display='block'; }).catch(()=>{ form.style.display='none'; document.getElementById('sv-form-success').style.display='block'; });
+}
+
+window.addEventListener('load', () => {
+  if (typeof gsap === 'undefined') return;
+  gsap.registerPlugin(ScrollTrigger);
+  document.querySelectorAll('.gs-up').forEach(el => {
+    gsap.fromTo(el,
+      { opacity: 0, y: 28 },
+      { opacity: 1, y: 0, duration: 0.85, ease: 'power3.out',
+        scrollTrigger: { trigger: el, start: 'top 88%', toggleActions: 'play none none none' }
+      }
+    );
+  });
+  document.querySelectorAll('.gs-fade').forEach(el => {
+    gsap.fromTo(el,
+      { opacity: 0 },
+      { opacity: 1, duration: 0.7, ease: 'power2.out',
+        scrollTrigger: { trigger: el, start: 'top 88%', toggleActions: 'play none none none' }
+      }
+    );
+  });
+});
+</script>
+</body>
+</html>

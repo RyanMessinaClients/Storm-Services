@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Storm Colleton | Storm Colleton & Associates</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<style>
+:root{
+  --bg:#07070e;--bg2:#0c0c18;--card:#12121e;--card2:#161628;
+  --border:rgba(255,255,255,0.07);--border-b:rgba(94,106,210,0.22);
+  --text:#f7f8f8;--text-2:rgba(247,248,248,0.6);--text-3:rgba(247,248,248,0.32);--text-4:rgba(247,248,248,0.16);
+  --blue:#5e6ad2;--blue-b:#7b8cef;--blue-dim:rgba(94,106,210,0.13);--cyan:#4cc9f0;
+  --font:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  --r:6px;--gutter:clamp(20px,5vw,80px);--max:1280px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:15px;line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:9998;opacity:0.5;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:900;height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 var(--gutter);border-bottom:1px solid transparent;transition:background .35s,border-color .35s;}
+nav.scrolled{background:rgba(7,7,14,0.9);border-color:var(--border);backdrop-filter:blur(20px) saturate(1.6);}
+nav{transition:transform .35s cubic-bezier(.4,0,.2,1),background .35s,border-color .35s;}
+nav.nav-hidden{transform:translateY(-100%);}
+.nav-logo{display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--text);font-size:14px;font-weight:600;letter-spacing:-0.01em;}
+.nav-mark{width:24px;height:24px;background:linear-gradient(135deg,var(--blue),var(--blue-b));border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.nav-mark svg{width:13px;height:13px;}
+.nav-links{display:flex;list-style:none;position:absolute;left:50%;transform:translateX(-50%);}
+.nav-links a{color:var(--text-2);text-decoration:none;font-size:13px;font-weight:450;padding:6px 14px;border-radius:5px;transition:color .15s,background .15s;}
+.nav-links a:hover{color:var(--text);background:rgba(255,255,255,0.05);}
+.nav-links a.active{color:var(--text);}
+.nav-right{display:flex;gap:8px;align-items:center;}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 16px;font-size:13px;font-weight:500;border-radius:5px;text-decoration:none;cursor:pointer;border:none;transition:all .18s;font-family:var(--font);}
+.btn-ghost{background:transparent;color:var(--text-2);border:1px solid var(--border-b);}
+.btn-ghost:hover{color:var(--text);background:rgba(255,255,255,0.05);}
+.btn-blue{background:var(--blue);color:#fff;border:1px solid rgba(255,255,255,0.1);box-shadow:0 0 20px rgba(94,106,210,0.28);}
+.btn-blue:hover{background:var(--blue-b);box-shadow:0 0 30px rgba(94,106,210,0.45);}
+.divider{border:none;border-top:1px solid var(--border);margin:0;}
+.wrap{max-width:var(--max);margin:0 auto;padding:0 var(--gutter);}
+.section-eyebrow{font-size:11px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--blue-b);margin-bottom:14px;}
+.section-h2{font-size:clamp(32px,4vw,52px);font-weight:700;letter-spacing:-0.03em;line-height:1.1;}
+.section-body{font-size:16px;color:var(--text-2);line-height:1.7;max-width:600px;}
+.grad{background:linear-gradient(90deg,var(--text) 0%,var(--blue-b) 55%,var(--cyan) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+
+/* HERO */
+#sc-hero{position:relative;padding:180px 0 100px;background:var(--bg);overflow:hidden;}
+.sc-hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(94,106,210,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(94,106,210,0.04) 1px,transparent 1px);background-size:60px 60px;pointer-events:none;}
+.sc-hero-glow{position:absolute;top:0;right:10%;width:500px;height:500px;background:radial-gradient(ellipse,rgba(94,106,210,0.07) 0%,transparent 70%);pointer-events:none;}
+
+/* PHOTO + BIO */
+#sc-bio{padding:100px 0;background:var(--bg);}
+.sc-bio-grid{display:grid;grid-template-columns:380px 1fr;gap:64px;align-items:start;}
+
+/* Photo upload zone */
+.sc-photo-zone{position:relative;border-radius:12px;overflow:hidden;background:var(--card);border:1px solid var(--border);aspect-ratio:3/4;cursor:pointer;transition:border-color .2s;}
+.sc-photo-zone:hover{border-color:var(--border-b);}
+.sc-photo-zone img.uploaded{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+.sc-photo-ph{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;pointer-events:none;}
+.sc-photo-ph svg{opacity:0.2;}
+.sc-photo-ph-lbl{font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-4);}
+.sc-photo-hover{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(7,7,14,0.55);backdrop-filter:blur(3px);opacity:0;transition:opacity .22s;gap:8px;font-size:13px;font-weight:500;color:var(--text-2);}
+.sc-photo-zone:hover .sc-photo-hover{opacity:1;}
+.sc-photo-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;z-index:2;}
+
+/* Bio content */
+.sc-bio-content{display:flex;flex-direction:column;gap:0;}
+.sc-name{font-size:clamp(40px,5vw,64px);font-weight:700;letter-spacing:-0.03em;line-height:1.05;margin-bottom:8px;}
+.sc-title{font-size:16px;color:var(--blue-b);font-weight:500;margin-bottom:32px;letter-spacing:0.02em;}
+.sc-bio-text{font-size:15px;color:var(--text-2);line-height:1.8;margin-bottom:20px;}
+
+/* Editable bio area */
+.sc-bio-editable{font-size:15px;color:var(--text-2);line-height:1.8;background:transparent;border:1px dashed transparent;border-radius:var(--r);padding:12px;transition:border-color .2s;min-height:200px;width:100%;font-family:var(--font);resize:vertical;}
+.sc-bio-editable:focus{outline:none;border-color:var(--border-b);background:var(--card);}
+.sc-bio-edit-hint{font-size:11px;color:var(--text-4);margin-top:6px;letter-spacing:0.05em;}
+
+/* Credentials */
+.sc-creds{display:flex;flex-direction:column;gap:2px;margin-top:36px;}
+.sc-cred{display:flex;gap:14px;align-items:flex-start;padding:16px 0;border-bottom:1px solid var(--border);}
+.sc-cred:last-child{border-bottom:none;}
+.sc-cred-dot{width:6px;height:6px;border-radius:50%;background:var(--blue-b);margin-top:7px;flex-shrink:0;}
+.sc-cred-text{font-size:14px;color:var(--text-2);line-height:1.6;}
+.sc-cred-text strong{color:var(--text);font-weight:600;}
+
+/* STATS */
+#sc-stats{padding:80px 0;background:var(--bg2);}
+.sc-stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-top:48px;}
+.sc-stat-card{background:var(--card);padding:36px 28px;text-align:center;}
+.sc-stat-n{font-size:36px;font-weight:700;letter-spacing:-0.03em;background:linear-gradient(135deg,var(--text),var(--blue-b));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px;}
+.sc-stat-l{font-size:12px;color:var(--text-3);font-weight:500;letter-spacing:0.05em;text-transform:uppercase;}
+
+/* CONTACT */
+#sc-contact{padding:100px 0 120px;background:var(--bg);}
+.sc-contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start;margin-top:56px;}
+.sc-info-list{display:flex;flex-direction:column;gap:2px;}
+.sc-info-item{display:flex;gap:16px;align-items:flex-start;padding:20px 0;border-bottom:1px solid var(--border);}
+.sc-info-item:last-child{border-bottom:none;}
+.sc-info-icon{width:36px;height:36px;border-radius:8px;background:var(--blue-dim);border:1px solid var(--border-b);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--blue-b);}
+.sc-info-label{font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-3);margin-bottom:4px;}
+.sc-info-value{font-size:14px;color:var(--text-2);}
+.sc-info-value a{color:var(--blue-b);text-decoration:none;}
+.sc-info-value a:hover{text-decoration:underline;}
+
+/* FORM */
+.sc-form{display:flex;flex-direction:column;gap:14px;}
+.sc-input{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:12px 16px;font-size:14px;color:var(--text);font-family:var(--font);outline:none;transition:border-color .15s;width:100%;}
+.sc-input:focus{border-color:var(--border-b);}
+.sc-input::placeholder{color:var(--text-4);}
+.sc-textarea{min-height:120px;resize:vertical;}
+
+/* FOOTER */
+footer{padding:32px var(--gutter);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.footer-copy{font-size:12px;color:var(--text-3);}
+.footer-back{font-size:12px;color:var(--text-3);text-decoration:none;transition:color .15s;}
+.footer-back:hover{color:var(--text);}
+
+/* ANIMATIONS */
+.gs-up{opacity:0;transform:translateY(24px);}
+.gs-fade{opacity:0;}
+@keyframes gsap-fallback{to{opacity:1;transform:none;}}
+.gs-up,.gs-fade{animation:gsap-fallback 0s 2s forwards;}
+
+/* MOBILE / TABLET */
+.nav-toggle{display:none;width:36px;height:36px;align-items:center;justify-content:center;background:transparent;border:1px solid var(--border-b);border-radius:6px;cursor:pointer;color:var(--text);}
+.nav-toggle svg{width:18px;height:18px;}
+
+@media (max-width: 1024px){
+  .nav-right .btn-ghost{display:none;}
+  .sc-bio-grid{grid-template-columns:1fr !important;gap:40px !important;}
+  .sc-bio-grid > div:first-child{max-width:380px;margin:0 auto;width:100%;}
+  .sc-stats-grid{grid-template-columns:repeat(2,1fr) !important;}
+  .sc-contact-grid{grid-template-columns:1fr !important;gap:48px !important;}
+}
+
+@media (max-width: 720px){
+  :root{--gutter:18px;}
+  nav{height:54px;}
+  .nav-links{display:none;position:fixed;top:54px;left:0;right:0;flex-direction:column;background:rgba(7,7,14,0.98);backdrop-filter:blur(24px);border-bottom:1px solid var(--border);padding:18px var(--gutter);gap:14px;transform:none !important;}
+  .nav-links.open{display:flex;}
+  .nav-links li{width:100%;}
+  .nav-links a{display:block;padding:10px 0;font-size:15px;border-bottom:1px solid var(--border);}
+  .nav-right{gap:8px;}
+  .nav-right .btn-blue{padding:8px 14px !important;font-size:12px !important;}
+  .nav-toggle{display:inline-flex;}
+  .nav-logo-text{font-size:13px;}
+  #sc-hero,#sc-bio,#sc-stats,#sc-contact{padding:60px 0 !important;}
+  .sc-stats-grid{grid-template-columns:1fr !important;}
+  .sc-form .form-row,.sc-form > div[style*="grid-template-columns"]{grid-template-columns:1fr !important;}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="mainNav">
+  <a href="index.html" class="nav-logo">
+    <div class="nav-mark">
+      <svg viewBox="0 0 13 13" fill="none"><path d="M6.5 1L12 4v5L6.5 12 1 9V4L6.5 1z" stroke="white" stroke-width="1.3" fill="none"/><circle cx="6.5" cy="6.5" r="1.6" fill="white"/></svg>
+    </div>
+    <span class="nav-logo-text">Storm Colleton & Associates</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="storm-colleton.html" class="active" style="color:var(--text);">Storm Colleton</a></li>
+    <li><a href="faith-based.html" style="color:var(--blue-b);">Faith-Based</a></li>
+    <li><a href="index.html#contact">Contact</a></li>
+  </ul>
+  <div class="nav-right">
+    <a href="#sc-contact" class="btn btn-ghost">Consultation</a>
+    <a href="#sc-contact" class="btn btn-blue">Request Protection</a>
+    <button class="nav-toggle" aria-label="Menu" onclick="document.querySelector('.nav-links').classList.toggle('open')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="sc-hero" data-screen-label="01 Hero">
+  <div class="sc-hero-grid"></div>
+  <div class="sc-hero-glow"></div>
+  <div class="wrap">
+    <div class="section-eyebrow gs-fade">The Founder</div>
+    <h1 class="section-h2 gs-up" style="font-size:clamp(48px,7vw,96px);max-width:900px;">Storm<br><span class="grad">Colleton</span></h1>
+    <p class="section-body gs-up" style="margin-top:20px;font-size:18px;max-width:560px;">Founder & Lead Agent, Storm Colleton & Associates. Over two decades of elite executive protection, faith-based security, and high-profile operations worldwide.</p>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- BIO + PHOTO -->
+<section id="sc-bio" data-screen-label="02 Biography">
+  <div class="wrap">
+    <div class="sc-bio-grid">
+
+      <!-- Founder photo (static) -->
+      <div class="gs-fade">
+        <div class="sc-photo-zone" id="founderPhotoZone" style="cursor:default;">
+          <img src="uploads/founder-photo.jpg?v=3" alt="Storm Colleton" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;">
+        </div>
+      </div>
+
+      <!-- Bio content -->
+      <div class="sc-bio-content gs-up">
+        <div class="sc-name">Storm Colleton</div>
+        <div class="sc-title">Founder & Lead Agent — Storm Colleton & Associates</div>
+
+        <div class="sc-bio-text">Storm Colleton is a highly decorated executive protection specialist with over 20 years of experience safeguarding some of the world's most high-profile individuals, organizations, and faith communities.</div>
+        <div class="sc-bio-text" style="margin-top:14px;">A former New Jersey State Police officer and trained security operative, Storm founded Storm Colleton & Associates with a singular mission: to provide world-class protection that is as effective as it is precise. His approach combines military precision with extensive field experience — ensuring every client receives protection tailored to their specific environment and needs.</div>
+        <div class="sc-bio-text" style="margin-top:14px;">Storm has led protection operations across the United States and internationally, covering heads of industry, faith leaders, celebrities, and dignitaries. His reputation for professionalism, discretion, and mission success has made him one of the most trusted names in executive protection.</div>
+
+        <div class="sc-creds">
+          <div class="sc-cred">
+            <div class="sc-cred-dot"></div>
+            <div class="sc-cred-text"><strong>20+ Years</strong> of executive protection and security operations</div>
+          </div>
+          <div class="sc-cred">
+            <div class="sc-cred-dot"></div>
+            <div class="sc-cred-text"><strong>Extensive Client Portfolio</strong> — protection experience spanning corporate, faith-based, and entertainment sectors</div>
+          </div>
+          <div class="sc-cred">
+            <div class="sc-cred-dot"></div>
+            <div class="sc-cred-text"><strong>Tactical Defense Instructor</strong> — certified instructor in advanced defense and tactical protection techniques</div>
+          </div>
+          <div class="sc-cred">
+            <div class="sc-cred-dot"></div>
+            <div class="sc-cred-text"><strong>New Jersey State Police</strong> — former law enforcement professional with extensive field experience</div>
+          </div>
+          <div class="sc-cred">
+            <div class="sc-cred-dot"></div>
+            <div class="sc-cred-text"><strong>Specialist</strong> in faith-based leader protection and ministry security</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- STATS -->
+<section id="sc-stats" data-screen-label="03 Stats">
+  <div class="wrap">
+    <div class="gs-up">
+      <div class="section-eyebrow">By the Numbers</div>
+      <h2 class="section-h2">A Record of<br><span class="grad">Excellence</span></h2>
+    </div>
+    <div class="sc-stats-grid">
+      <div class="sc-stat-card gs-up">
+        <div class="sc-stat-n">20+</div>
+        <div class="sc-stat-l">Years Experience</div>
+      </div>
+      <div class="sc-stat-card gs-up">
+        <div class="sc-stat-n">Licensed</div>
+        <div class="sc-stat-l">& Certified</div>
+      </div>
+
+      <div class="sc-stat-card gs-up">
+        <div class="sc-stat-n"><strong>Tactical</strong></div>
+        <div class="sc-stat-l">Defense Instructor</div>
+      </div>
+      <div class="sc-stat-card gs-up">
+        <div class="sc-stat-n">NJ</div>
+        <div class="sc-stat-l">State Police Veteran</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- CONTACT -->
+<section id="sc-contact" data-screen-label="04 Contact">
+  <div class="wrap">
+    <div class="gs-up">
+      <div class="section-eyebrow">Get In Touch</div>
+      <h2 class="section-h2">Contact<br><span class="grad">Storm Colleton</span></h2>
+    </div>
+    <div class="sc-contact-grid">
+
+      <!-- Contact info -->
+      <div class="sc-info-list gs-up">
+        <div class="sc-info-item">
+          <div class="sc-info-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 4l6 5 6-5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><rect x="1" y="3" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.3"/></svg>
+          </div>
+          <div>
+            <div class="sc-info-label">Email</div>
+            <div class="sc-info-value"><a href="mailto:trooperstorm@hotmail.com">trooperstorm@hotmail.com</a></div>
+          </div>
+        </div>
+        <div class="sc-info-item">
+          <div class="sc-info-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 2h3l1.5 3.5L6 7s1 2 3 3l1.5-1.5L14 10v3c-6 1-12-5-11-11z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+          </div>
+          <div>
+            <div class="sc-info-label">Phone</div>
+            <div class="sc-info-value"><a href="tel:+19086013176">(908) 601-3176</a></div>
+          </div>
+        </div>
+        <div class="sc-info-item">
+          <div class="sc-info-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="7" r="3" stroke="currentColor" stroke-width="1.3"/><path d="M8 1C4.7 1 2 3.7 2 7c0 4.5 6 8 6 8s6-3.5 6-8c0-3.3-2.7-6-6-6z" stroke="currentColor" stroke-width="1.3"/></svg>
+          </div>
+          <div>
+            <div class="sc-info-label">Coverage</div>
+            <div class="sc-info-value">Nationwide & International</div>
+          </div>
+        </div>
+        <div class="sc-info-item">
+          <div class="sc-info-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.3"/><path d="M8 4v4l3 2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+          </div>
+          <div>
+            <div class="sc-info-label">Availability</div>
+            <div class="sc-info-value">24/7 — All inquiries strictly confidential</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form -->
+      <div class="gs-up">
+        <form class="sc-form" id="scForm" onsubmit="handleScSubmit(event)">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <input class="sc-input" type="text" placeholder="First Name" required>
+            <input class="sc-input" type="text" placeholder="Last Name" required>
+          </div>
+          <input class="sc-input" type="email" placeholder="Email Address" required>
+          <input class="sc-input" type="tel" placeholder="Phone Number">
+          <input class="sc-input" type="text" placeholder="Organization / Company">
+          <select class="sc-input" style="cursor:pointer;">
+            <option value="" style="background:var(--card);">Service Type</option>
+            <option style="background:var(--card);">Executive Protection</option>
+            <option style="background:var(--card);">Secure Transportation</option>
+            <option style="background:var(--card);">Estate and Residential Protection</option>
+            <option style="background:var(--card);">Vulnerability and Risk Assessments</option>
+            <option style="background:var(--card);">Training</option>
+            <option style="background:var(--card);">Investigative Services</option>
+            <option style="background:var(--card);">Home Security & Safety Planning</option>
+            <option style="background:var(--card);">Active Shooter Response</option>
+            <option style="background:var(--card);">Faith-Based Security</option>
+            <option style="background:var(--card);">Other</option>
+          </select>
+          <textarea class="sc-input sc-textarea" placeholder="How can Storm Colleton & Associates help you?"></textarea>
+          <button type="submit" class="btn btn-blue" style="padding:13px;font-size:14px;justify-content:center;">Send Message</button>
+        </form>
+        <div id="sc-form-success" style="display:none;text-align:center;padding:48px 20px;">
+          <div style="width:48px;height:48px;border-radius:50%;background:var(--blue-dim);border:1px solid var(--border-b);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 10l4 4 8-8" stroke="var(--blue-b)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div style="font-size:18px;font-weight:600;margin-bottom:8px;">Message Received</div>
+          <div style="font-size:14px;color:var(--text-2);">Storm Colleton & Associates will be in touch within 24 hours.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-copy">© 2025 Storm Colleton & Associates. All rights reserved.</div>
+  <div style="font-size:12px;color:var(--text-3);">Aberdeen, NJ &nbsp;·&nbsp; Mon–Fri: 9:00 AM – 6:00 PM</div>
+  <a href="index.html" class="footer-back">← Back to Main Site</a>
+</footer>
+
+<script>
+// Nav scroll
+(() => {
+  const nav = document.getElementById('mainNav');
+  let navHideTimer = null;
+  function showNav() {
+    nav.classList.remove('nav-hidden');
+    clearTimeout(navHideTimer);
+    if (window.scrollY > 50) {
+      navHideTimer = setTimeout(() => nav.classList.add('nav-hidden'), 900);
+    }
+  }
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 50);
+    if (window.scrollY <= 50) {
+      nav.classList.remove('nav-hidden');
+      clearTimeout(navHideTimer);
+      return;
+    }
+    showNav();
+  }, { passive: true });
+  window.addEventListener('mousemove', (e) => {
+    if (e.clientY < 80) showNav();
+  }, { passive: true });
+})();
+
+// Form submit
+function handleScSubmit(e) {
+  e.preventDefault();
+  const form = document.getElementById('scForm');
+  const inputs = form.querySelectorAll('input,select,textarea');
+  const data = {_subject:'Inquiry - Storm Colleton & Associates', _captcha:'false'};
+  inputs.forEach((el,i) => { if(el.value) data[(el.placeholder||'field_'+i).replace(/[^a-z0-9]/gi,'_')] = el.value; });
+  fetch('https://api.web3forms.com/submit', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
+    body: JSON.stringify({ access_key: '1dbc633a-5b58-4c6e-939d-9b1583eabb5f', ...data })
+  }).then(r=>r.json()).then(d=>{ form.style.display='none'; document.getElementById('sc-form-success').style.display='block'; }).catch(()=>{ form.style.display='none'; document.getElementById('sc-form-success').style.display='block'; });
+}
+
+// GSAP animations
+window.addEventListener('load', () => {
+  if (typeof gsap === 'undefined') return;
+  gsap.registerPlugin(ScrollTrigger);
+  document.querySelectorAll('.gs-up').forEach(el => {
+    gsap.fromTo(el,
+      { opacity: 0, y: 28 },
+      { opacity: 1, y: 0, duration: 0.85, ease: 'power3.out',
+        scrollTrigger: { trigger: el, start: 'top 88%', toggleActions: 'play none none none' }
+      }
+    );
+  });
+  document.querySelectorAll('.gs-fade').forEach(el => {
+    gsap.fromTo(el,
+      { opacity: 0 },
+      { opacity: 1, duration: 0.7, ease: 'power2.out',
+        scrollTrigger: { trigger: el, start: 'top 88%', toggleActions: 'play none none none' }
+      }
+    );
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aegis — Client Network</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<style>
+:root {
+  --bg: #07070e;
+  --card: #0f0f1c;
+  --card2: #141428;
+  --border: rgba(255,255,255,0.07);
+  --border-b: rgba(94,106,210,0.25);
+  --text: #f7f8f8;
+  --text-2: rgba(247,248,248,0.58);
+  --text-3: rgba(247,248,248,0.28);
+  --blue: #5e6ad2;
+  --blue-b: #7b8cef;
+  --blue-dim: rgba(94,106,210,0.1);
+  --font: 'Inter', -apple-system, sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg); color: var(--text);
+  font-family: var(--font); font-size: 15px;
+  min-height: 100vh; overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── LAYOUT ── */
+.section {
+  padding: 100px clamp(24px,6vw,100px);
+  max-width: 1400px; margin: 0 auto;
+}
+.eyebrow {
+  font-size: 11px; font-weight: 600; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--blue-b);
+  display: flex; align-items: center; gap: 8px; margin-bottom: 14px;
+}
+.eyebrow::before { content:''; display:block; width:14px; height:1px; background:var(--blue); }
+.heading {
+  font-size: clamp(36px, 5vw, 62px); font-weight: 700;
+  letter-spacing: -0.03em; line-height: 1.02; color: var(--text); margin-bottom: 20px;
+}
+.heading .grad {
+  background: linear-gradient(90deg, var(--text) 0%, var(--blue-b) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.sub { font-size: 15px; color: var(--text-2); line-height: 1.72; max-width: 480px; margin-bottom: 60px; }
+
+/* ── FILTER TABS ── */
+.filters {
+  display: flex; gap: 6px; margin-bottom: 48px; flex-wrap: wrap;
+}
+.filter-btn {
+  padding: 6px 14px; border-radius: 4px; font-size: 12px; font-weight: 500;
+  letter-spacing: 0.04em; cursor: pointer; border: 1px solid var(--border);
+  background: transparent; color: var(--text-3);
+  transition: all .18s; font-family: var(--font);
+}
+.filter-btn:hover { color: var(--text-2); border-color: var(--border-b); background: var(--blue-dim); }
+.filter-btn.active {
+  background: var(--blue); color: #fff; border-color: var(--blue);
+  box-shadow: 0 0 16px rgba(94,106,210,0.3);
+}
+
+/* ── GRID ── */
+.clients-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 1px; background: var(--border);
+  border: 1px solid var(--border); border-radius: 8px; overflow: hidden;
+}
+
+/* ── CLIENT CARD ── */
+.client-card {
+  background: var(--card);
+  padding: 32px 28px;
+  display: flex; flex-direction: column; gap: 0;
+  position: relative; overflow: hidden;
+  cursor: pointer; transition: background .2s;
+}
+.client-card:hover { background: var(--card2); }
+.client-card::before {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(94,106,210,0.06) 0%, transparent 60%);
+  opacity: 0; transition: opacity .3s;
+}
+.client-card:hover::before { opacity: 1; }
+/* Blue top accent line */
+.client-card::after {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, var(--blue), transparent);
+  transform: scaleX(0); transform-origin: left; transition: transform .4s;
+}
+.client-card:hover::after { transform: scaleX(1); }
+
+.card-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 20px; }
+.card-logo {
+  width: 44px; height: 44px; border-radius: 8px;
+  background: var(--blue-dim); border: 1px solid var(--border-b);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  font-size: 16px; font-weight: 700; color: var(--blue-b); letter-spacing: -0.02em;
+}
+.card-status {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 10px; font-weight: 600; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--text-3);
+}
+.status-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: #3dde8c; box-shadow: 0 0 6px #3dde8c;
+  animation: blink 2.5s ease-in-out infinite;
+}
+.status-dot.inactive { background: var(--text-3); box-shadow: none; animation: none; }
+@keyframes blink { 0%,100%{opacity:1}50%{opacity:0.35} }
+
+.card-sector {
+  font-size: 10px; font-weight: 600; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--blue-b); margin-bottom: 6px;
+}
+.card-name {
+  font-size: 18px; font-weight: 700; letter-spacing: -0.02em;
+  color: var(--text); margin-bottom: 8px; line-height: 1.2;
+}
+.card-desc {
+  font-size: 13px; color: var(--text-2); line-height: 1.72; flex: 1; margin-bottom: 20px;
+}
+.card-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 22px; }
+.card-tag {
+  font-size: 10px; font-weight: 500; letter-spacing: 0.06em;
+  color: var(--text-3); background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border); padding: 3px 8px; border-radius: 3px;
+}
+.card-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  padding-top: 18px; border-top: 1px solid var(--border);
+}
+.card-location {
+  font-size: 11px; color: var(--text-3); font-weight: 500;
+  display: flex; align-items: center; gap: 5px;
+}
+.card-location svg { opacity: 0.4; }
+.card-cta {
+  font-size: 11px; font-weight: 600; color: var(--blue-b);
+  letter-spacing: 0.06em; display: flex; align-items: center; gap: 4px;
+  opacity: 0; transform: translateX(-6px);
+  transition: opacity .2s, transform .2s;
+}
+.client-card:hover .card-cta { opacity: 1; transform: translateX(0); }
+
+/* ── FEATURED LARGE CARD ── */
+.client-card.featured {
+  grid-column: span 2;
+  background: linear-gradient(135deg, #0f0f20, #0d0d1e);
+  border: none;
+  padding: 40px 40px;
+}
+.client-card.featured .card-name { font-size: 24px; }
+.client-card.featured .card-desc { font-size: 14px; max-width: 560px; }
+.featured-metric-row {
+  display: flex; gap: 32px; margin-top: 4px; margin-bottom: 22px;
+}
+.feat-metric { padding-left: 12px; border-left: 1px solid var(--blue); }
+.feat-metric-n {
+  font-size: 24px; font-weight: 700; letter-spacing: -0.03em;
+  background: linear-gradient(135deg, var(--text), var(--blue-b));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.feat-metric-l { font-size: 10px; color: var(--text-3); font-weight: 500; margin-top: 2px; }
+
+/* ── DETAIL OVERLAY ── */
+#detailOverlay {
+  position: fixed; inset: 0; z-index: 999;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(7,7,14,0.88); backdrop-filter: blur(20px);
+  opacity: 0; pointer-events: none; transition: opacity .3s;
+  padding: 24px;
+}
+#detailOverlay.open { opacity: 1; pointer-events: all; }
+.detail-panel {
+  background: var(--card); border: 1px solid var(--border-b);
+  border-radius: 10px; width: 100%; max-width: 680px;
+  max-height: 85vh; overflow-y: auto;
+  box-shadow: 0 32px 80px rgba(0,0,0,0.7), 0 0 0 0.5px rgba(94,106,210,0.2);
+  transform: translateY(20px) scale(0.97);
+  transition: transform .35s cubic-bezier(.22,.61,.36,1);
+  position: relative;
+}
+#detailOverlay.open .detail-panel { transform: translateY(0) scale(1); }
+.detail-close {
+  position: sticky; top: 0; right: 0;
+  display: flex; justify-content: flex-end;
+  padding: 16px 20px 0;
+  background: var(--card);
+  z-index: 2;
+}
+.detail-close-btn {
+  width: 28px; height: 28px; border-radius: 5px;
+  background: rgba(255,255,255,0.06); border: 1px solid var(--border);
+  color: var(--text-2); cursor: pointer; font-size: 14px;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .15s, color .15s;
+}
+.detail-close-btn:hover { background: rgba(255,255,255,0.1); color: var(--text); }
+.detail-body { padding: 28px 36px 36px; }
+.detail-logo-row {
+  display: flex; align-items: center; gap: 14px; margin-bottom: 22px;
+}
+.detail-logo {
+  width: 52px; height: 52px; border-radius: 10px;
+  background: var(--blue-dim); border: 1px solid var(--border-b);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; font-weight: 700; color: var(--blue-b);
+  flex-shrink: 0;
+}
+.detail-name { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; }
+.detail-sector { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--blue-b); margin-top: 3px; }
+.detail-divider { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+.detail-section-label {
+  font-size: 10px; font-weight: 600; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--text-3); margin-bottom: 8px;
+}
+.detail-text { font-size: 14px; color: var(--text-2); line-height: 1.75; }
+.detail-metrics {
+  display: grid; grid-template-columns: repeat(3,1fr);
+  gap: 1px; background: var(--border);
+  border: 1px solid var(--border); border-radius: 6px; overflow: hidden; margin: 20px 0;
+}
+.detail-metric {
+  background: #0c0c1a; padding: 18px 16px; border-left: 2px solid var(--blue);
+}
+.detail-metric-n {
+  font-size: 22px; font-weight: 700; letter-spacing: -0.03em;
+  background: linear-gradient(135deg, var(--text), var(--blue-b));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.detail-metric-l { font-size: 10px; color: var(--text-3); margin-top: 3px; font-weight: 500; }
+.detail-ops { display: flex; flex-direction: column; gap: 10px; margin-top: 4px; }
+.detail-op {
+  display: flex; gap: 12px; align-items: flex-start;
+  padding: 14px 16px; background: rgba(255,255,255,0.025);
+  border: 1px solid var(--border); border-radius: 5px;
+}
+.detail-op-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--blue-b); flex-shrink: 0; margin-top: 4px;
+  box-shadow: 0 0 6px rgba(94,106,210,0.6);
+}
+.detail-op-text { font-size: 13px; color: var(--text-2); line-height: 1.6; }
+.detail-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 16px; }
+.detail-tag {
+  font-size: 11px; font-weight: 500; color: var(--blue-b);
+  background: var(--blue-dim); border: 1px solid var(--border-b);
+  padding: 4px 10px; border-radius: 4px;
+}
+
+/* ── STATS BAR ── */
+.stats-bar {
+  display: grid; grid-template-columns: repeat(4,1fr);
+  gap: 1px; background: var(--border);
+  border: 1px solid var(--border); border-radius: 8px; overflow: hidden;
+  margin-bottom: 56px;
+}
+.stat-item {
+  background: var(--card); padding: 24px 28px;
+  border-left: 2px solid var(--blue);
+}
+.stat-n {
+  font-size: 36px; font-weight: 700; letter-spacing: -0.04em;
+  background: linear-gradient(135deg, var(--text), var(--blue-b));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.stat-l { font-size: 11px; color: var(--text-3); font-weight: 500; margin-top: 4px; }
+</style>
+</head>
+<body>
+
+<section class="section">
+
+  <div class="eyebrow">Client Network</div>
+  <h2 class="heading">Active Global <span class="grad">Operations</span></h2>
+  <p class="sub">A select portfolio of ongoing and completed engagements. All client identities are held in strict confidence — names and details have been generalized per agreement.</p>
+
+  <!-- Stats bar -->
+  <div class="stats-bar">
+    <div class="stat-item">
+      <div class="stat-n" data-target="200" data-suffix="+">200+</div>
+      <div class="stat-l">Clients Served</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-n" data-target="38">38</div>
+      <div class="stat-l">Countries Active</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-n" data-target="500" data-suffix="+">500+</div>
+      <div class="stat-l">Operations Completed</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-n">100%</div>
+      <div class="stat-l">Incident-Free Record</div>
+    </div>
+  </div>
+
+  <!-- Filter tabs -->
+  <div class="filters" id="filters">
+    <button class="filter-btn active" data-filter="all">All Engagements</button>
+    <button class="filter-btn" data-filter="executive">Executive Protection</button>
+    <button class="filter-btn" data-filter="corporate">Corporate Security</button>
+    <button class="filter-btn" data-filter="risk">Risk Assessment</button>
+    <button class="filter-btn" data-filter="private">Private Client</button>
+    <button class="filter-btn" data-filter="international">International Ops</button>
+  </div>
+
+  <!-- Client grid -->
+  <div class="clients-grid" id="clientGrid"></div>
+
+</section>
+
+<!-- Detail overlay -->
+<div id="detailOverlay">
+  <div class="detail-panel" id="detailPanel">
+    <div class="detail-close">
+      <button class="detail-close-btn" id="detailClose">✕</button>
+    </div>
+    <div class="detail-body" id="detailBody"></div>
+  </div>
+</div>
+
+<script>
+// ── CLIENT DATA ─────────────────────────────────────────────
+const clients = [
+  {
+    id: 1, featured: true,
+    initials: 'FG', sector: 'Financial Services',
+    name: 'Major Financial Institution', location: 'New York, USA',
+    status: 'active', filter: ['executive','corporate'],
+    desc: 'Multi-year executive protection program for C-suite principals spanning domestic board activities, investor roadshows, and international travel. Comprehensive threat intelligence integrated with existing corporate security infrastructure.',
+    tags: ['Executive Protection','Corporate Security','Threat Intelligence','Travel Security'],
+    metrics: [{ n:'4+', l:'Years Active' },{ n:'12', l:'Principals Protected' },{ n:'340+', l:'Operations' }],
+    ops: [
+      'Close protection for CEO and CFO during high-profile shareholder events and public appearances',
+      'Advance security work for quarterly board meetings across six domestic locations',
+      'International travel security for executive team across Europe and Asia Pacific',
+      'Integrated threat intelligence program monitoring emerging risks to senior leadership',
+    ]
+  },
+  {
+    id: 2, featured: false,
+    initials: 'TC', sector: 'Technology',
+    name: 'Global Technology Corporation', location: 'San Francisco, USA',
+    status: 'active', filter: ['executive','risk'],
+    desc: 'Executive protection and corporate security consulting during IPO roadshow and post-listing period. Ongoing threat assessment for CEO and senior product leadership.',
+    tags: ['Executive Protection','Risk Assessment','IPO Security'],
+    metrics: [{ n:'18mo', l:'Engagement' },{ n:'3', l:'Principals' },{ n:'8', l:'Countries' }],
+    ops: [
+      'Full close protection detail during 14-city IPO roadshow across North America and Europe',
+      'Residential security assessment and hardening for CEO principal',
+      'Ongoing threat monitoring and digital risk assessment for senior leadership',
+    ]
+  },
+  {
+    id: 3, featured: false,
+    initials: 'PE', sector: 'Private Equity',
+    name: 'Private Equity Firm', location: 'Chicago, USA',
+    status: 'active', filter: ['executive','corporate'],
+    desc: 'Rapid-deployment security program during contentious corporate acquisition. Protection for managing director throughout proceedings and post-announcement period.',
+    tags: ['Executive Protection','Rapid Deployment','Corporate Security'],
+    metrics: [{ n:'48hr', l:'Deploy Time' },{ n:'6mo', l:'Duration' },{ n:'100%', l:'Incident Free' }],
+    ops: [
+      'Emergency deployment of 6-person protection detail within 48 hours of threat escalation',
+      'Secure transportation and advance work for all client engagements during acquisition period',
+      'Residential security installation and monitoring for principal family members',
+    ]
+  },
+  {
+    id: 4, featured: false,
+    initials: 'EN', sector: 'Energy',
+    name: 'Energy Holdings LLC', location: 'Houston, USA',
+    status: 'active', filter: ['corporate','international'],
+    desc: 'Ongoing corporate security operations and executive protection across domestic refinery operations and international exploration sites in high-risk regions.',
+    tags: ['Corporate Security','International Ops','Facility Protection'],
+    metrics: [{ n:'3+', l:'Years Active' },{ n:'6', l:'Locations' },{ n:'4', l:'Continents' }],
+    ops: [
+      'Facility security management for three domestic refinery locations',
+      'Executive protection for senior leadership visiting international operations in West Africa and Middle East',
+      'Crisis response planning and personnel evacuation protocol development',
+    ]
+  },
+  {
+    id: 5, featured: false,
+    initials: 'HN', sector: 'Private Client',
+    name: 'Ultra-High-Net-Worth Individual', location: 'Miami, USA',
+    status: 'active', filter: ['private','executive'],
+    desc: 'Full-time personal security detail for UHNW principal with complex lifestyle, multiple residences, and frequent international travel. Discreet integration with principal\'s daily life.',
+    tags: ['Private Client','Full-Time Detail','Travel Security','Residential Security'],
+    metrics: [{ n:'2+', l:'Years Active' },{ n:'18', l:'Countries Visited' },{ n:'4', l:'Residences Secured' }],
+    ops: [
+      'Dedicated 3-person rotating protection detail with 24/7 coverage',
+      'Security management across four residential properties in three countries',
+      'Advance security for international leisure and business travel',
+      'Secure transportation fleet management and driver vetting',
+    ]
+  },
+  {
+    id: 6, featured: false,
+    initials: 'GM', sector: 'Media & Entertainment',
+    name: 'Entertainment Conglomerate', location: 'Los Angeles, USA',
+    status: 'completed', filter: ['executive','corporate'],
+    desc: 'High-profile talent and executive protection for major studio during awards season and high-visibility public appearances. Security consulting for international film production locations.',
+    tags: ['Executive Protection','Event Security','Production Security'],
+    metrics: [{ n:'8mo', l:'Engagement' },{ n:'24', l:'Events Covered' },{ n:'5', l:'Countries' }],
+    ops: [
+      'Close protection for studio executives at major industry events including film festivals',
+      'Production security assessment and personnel for international filming locations',
+      'Security consulting for high-profile talent during press tours and public appearances',
+    ]
+  },
+  {
+    id: 7, featured: false,
+    initials: 'PA', sector: 'Policy & Advisory',
+    name: 'Policy Advisory Group', location: 'Washington DC, USA',
+    status: 'active', filter: ['executive','risk'],
+    desc: 'Diplomatic-level executive protection and advance security work for senior policy principals. Intelligence-led threat assessment for clients operating in politically sensitive environments.',
+    tags: ['Executive Protection','Advance Work','Threat Intelligence','Diplomatic Security'],
+    metrics: [{ n:'5+', l:'Years Active' },{ n:'40+', l:'Countries' },{ n:'8', l:'Principals' }],
+    ops: [
+      'Advance security work for principals attending international summits and diplomatic functions',
+      'Comprehensive threat intelligence briefings prior to high-risk travel',
+      'Coordination with government protective services for joint operations',
+    ]
+  },
+  {
+    id: 8, featured: false,
+    initials: 'GC', sector: 'Gulf Region',
+    name: 'GCC Corporate Client', location: 'Dubai, UAE',
+    status: 'completed', filter: ['corporate','risk','international'],
+    desc: 'Corporate risk assessment and executive protection operations for regional conglomerate across Gulf Cooperation Council markets. Security program design and implementation.',
+    tags: ['Risk Assessment','Corporate Security','International Ops','Program Design'],
+    metrics: [{ n:'12mo', l:'Program Duration' },{ n:'6', l:'GCC Markets' },{ n:'18', l:'Assessments' }],
+    ops: [
+      'Comprehensive security risk assessment across all regional operating locations',
+      'Executive protection for visiting C-suite principals from international parent company',
+      'Security program design and local team training and certification',
+    ]
+  },
+  {
+    id: 9, featured: false,
+    initials: 'HC', sector: 'Healthcare',
+    name: 'National Healthcare System', location: 'Denver, USA',
+    status: 'completed', filter: ['corporate','risk'],
+    desc: 'Enterprise security consulting and threat assessment for national healthcare network. Executive protection during high-profile leadership transitions and media events.',
+    tags: ['Risk Assessment','Corporate Security','Executive Protection'],
+    metrics: [{ n:'9mo', l:'Engagement' },{ n:'42', l:'Facilities Assessed' },{ n:'6', l:'Principals' }],
+    ops: [
+      'Systemwide physical security assessment across 42 hospital and clinic locations',
+      'Executive protection for CEO during contentious leadership transition and media coverage',
+      'Security awareness training program for senior administrative staff',
+    ]
+  },
+];
+
+// ── RENDER GRID ──────────────────────────────────────────────
+const grid = document.getElementById('clientGrid');
+
+function renderCards(filter) {
+  const filtered = filter === 'all'
+    ? clients
+    : clients.filter(c => c.filter.includes(filter));
+
+  grid.innerHTML = '';
+
+  filtered.forEach((c, i) => {
+    const el = document.createElement('div');
+    el.className = 'client-card' + (c.featured && filter === 'all' ? ' featured' : '');
+    el.dataset.id = c.id;
+    el.style.opacity = 0;
+
+    const metricsHtml = c.featured && filter === 'all'
+      ? `<div class="featured-metric-row">
+          ${c.metrics.map(m => `<div class="feat-metric"><div class="feat-metric-n">${m.n}</div><div class="feat-metric-l">${m.l}</div></div>`).join('')}
+         </div>` : '';
+
+    el.innerHTML = `
+      <div class="card-header">
+        <div class="card-logo">${c.initials}</div>
+        <div class="card-status">
+          <div class="status-dot ${c.status === 'active' ? '' : 'inactive'}"></div>
+          ${c.status === 'active' ? 'Active' : 'Completed'}
+        </div>
+      </div>
+      <div class="card-sector">${c.sector}</div>
+      <div class="card-name">${c.name}</div>
+      <div class="card-desc">${c.desc}</div>
+      ${metricsHtml}
+      <div class="card-tags">${c.tags.map(t => `<span class="card-tag">${t}</span>`).join('')}</div>
+      <div class="card-footer">
+        <div class="card-location">
+          <svg width="10" height="12" viewBox="0 0 10 12" fill="none"><path d="M5 0C3.07 0 1.5 1.57 1.5 3.5c0 2.63 3.5 7 3.5 7s3.5-4.37 3.5-7C8.5 1.57 6.93 0 5 0zm0 5a1.5 1.5 0 110-3 1.5 1.5 0 010 3z" fill="currentColor"/></svg>
+          ${c.location}
+        </div>
+        <div class="card-cta">View Details →</div>
+      </div>
+    `;
+
+    el.addEventListener('click', () => openDetail(c));
+    grid.appendChild(el);
+
+    // Stagger animate in
+    gsap.to(el, { opacity: 1, y: 0, duration: 0.55, delay: i * 0.055, ease: 'power3.out',
+      from: { opacity: 0, y: 24 } });
+    gsap.fromTo(el, { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.55, delay: i * 0.055, ease: 'power3.out' });
+  });
+}
+
+// ── FILTERS ──────────────────────────────────────────────────
+document.getElementById('filters').addEventListener('click', e => {
+  const btn = e.target.closest('.filter-btn');
+  if (!btn) return;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderCards(btn.dataset.filter);
+});
+
+// ── DETAIL OVERLAY ───────────────────────────────────────────
+const overlay = document.getElementById('detailOverlay');
+const detailBody = document.getElementById('detailBody');
+
+function openDetail(c) {
+  detailBody.innerHTML = `
+    <div class="detail-logo-row">
+      <div class="detail-logo">${c.initials}</div>
+      <div>
+        <div class="detail-name">${c.name}</div>
+        <div class="detail-sector">${c.sector} · ${c.location}</div>
+      </div>
+    </div>
+
+    <div class="detail-section-label">Engagement Overview</div>
+    <div class="detail-text">${c.desc}</div>
+
+    <hr class="detail-divider">
+
+    <div class="detail-section-label">Key Metrics</div>
+    <div class="detail-metrics">
+      ${c.metrics.map(m => `
+        <div class="detail-metric">
+          <div class="detail-metric-n">${m.n}</div>
+          <div class="detail-metric-l">${m.l}</div>
+        </div>
+      `).join('')}
+    </div>
+
+    <div class="detail-section-label">Operational Detail</div>
+    <div class="detail-ops">
+      ${c.ops.map(op => `
+        <div class="detail-op">
+          <div class="detail-op-dot"></div>
+          <div class="detail-op-text">${op}</div>
+        </div>
+      `).join('')}
+    </div>
+
+    <div class="detail-tags">
+      ${c.tags.map(t => `<span class="detail-tag">${t}</span>`).join('')}
+    </div>
+  `;
+
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeDetail() {
+  overlay.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+document.getElementById('detailClose').addEventListener('click', closeDetail);
+overlay.addEventListener('click', e => { if (e.target === overlay) closeDetail(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDetail(); });
+
+// ── ANIMATED COUNTERS ────────────────────────────────────────
+document.querySelectorAll('[data-target]').forEach(el => {
+  const target = +el.dataset.target, suffix = el.dataset.suffix || '';
+  const dur = 2000, t0 = performance.now();
+  const tick = now => {
+    const t = Math.min((now - t0) / dur, 1);
+    el.textContent = Math.floor((1 - Math.pow(1-t, 3)) * target) + (t >= 1 ? suffix : '');
+    if (t < 1) requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+});
+
+// ── INITIAL RENDER ───────────────────────────────────────────
+renderCards('all');
+</script>
+</body>
+</html>
